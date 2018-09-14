@@ -1,0 +1,15 @@
+.git/
+.idea/
+.DS_Store
+Thumbs.db
+
+a.out
+*.exe
+
+*.retry
+*.orig
+.flymake*
+*.test
+*.log
+*.zip
+.*.swp
