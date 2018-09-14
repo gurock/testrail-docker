@@ -1,0 +1,45 @@
+version: '3'
+
+networks:
+  testrail:
+    driver: bridge
+    
+services:
+  php:
+    image: cbreit/testrail-php:${php_image:-7.0-fpm}
+    networks:
+      - testrail
+    volumes:
+      - 'testrail:/var/www/testrail'
+      - 'opt_testrail:/opt/testrail'
+
+  srv:
+    image: cbreit/testrail-nginx:latest
+    networks:
+      - testrail
+    ports:
+      - "${http_port:-8000}:80"
+    volumes:
+      - 'testrail:/var/www/testrail'
+      - 'opt_testrail:/opt/testrail'
+    depends_on:
+      - php
+      
+  db:
+    image: cbreit/testrail-mariadb:latest
+    networks:
+      - testrail
+    environment:
+      MYSQL_USER: 'testrail'
+      MYSQL_PASSWORD: 'testrail'
+      MYSQL_DATABASE: 'testrail'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+    depends_on:
+      - srv
+
+volumes:
+  testrail:
+    driver: local
+  opt_testrail:
+    driver: local
+
