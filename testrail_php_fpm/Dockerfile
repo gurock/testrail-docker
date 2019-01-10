@@ -1,8 +1,8 @@
 ARG ARG_PHP_VERSION=7.0
 FROM php:${ARG_PHP_VERSION}-fpm
 
-ARG ARG_IONCUBE_VERSION=10.2.4
 ARG ARG_PHP_VERSION=7.0
+ARG ARG_IONCUBE_VERSION=10.2.4
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -26,13 +26,16 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
-    
+
 RUN \
   wget  -O /tmp/ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
   tar -xzf /tmp/ioncube.tar.gz -C /tmp && \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
-    
+
+COPY custom-entrypoint.sh /custom-entrypoint.sh
+ENTRYPOINT ["/custom-entrypoint.sh"]
+CMD ["php-fpm"]
 
 EXPOSE 9000

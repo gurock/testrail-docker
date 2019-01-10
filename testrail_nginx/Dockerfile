@@ -25,7 +25,6 @@ RUN \
   chown -R www-data:www-data /var/www/testrail && \
   chown -R www-data:www-data /opt/testrail && \
   mkdir -p /var/www/testrail/logs && chown www-data:www-data /var/www/testrail/logs && \
-  mkdir /etc/cron.d && echo '* * * * * www-data /usr/bin/php /var/www/testrail/task.php' >> /etc/cron.d/testrail && chmod +x /etc/cron.d/testrail
 
 COPY http_testrail.conf /etc/nginx/conf.d/default.conf
 
