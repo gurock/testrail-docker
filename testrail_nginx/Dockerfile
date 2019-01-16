@@ -24,7 +24,8 @@ RUN \
   mv /tmp/testrail /var/www/ && \
   chown -R www-data:www-data /var/www/testrail && \
   chown -R www-data:www-data /opt/testrail && \
-  mkdir -p /var/www/testrail/logs && chown www-data:www-data /var/www/testrail/logs && \
+  mkdir -p /var/www/testrail/logs  && chown www-data:www-data /var/www/testrail/logs && \
+  mkdir -p /var/www/testrail/audit && chown www-data:www-data /var/www/testrail/audit
 
 COPY http_testrail.conf /etc/nginx/conf.d/default.conf
 
