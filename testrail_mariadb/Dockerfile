@@ -12,6 +12,8 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 COPY config.php /config.php
-
 COPY custom-entrypoint.sh /custom-entrypoint.sh
+
+VOLUME /var/lib/mysql
+
 ENTRYPOINT ["/custom-entrypoint.sh"]

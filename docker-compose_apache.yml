@@ -24,6 +24,8 @@ services:
       MYSQL_PASSWORD: 'testrail'
       MYSQL_DATABASE: 'testrail'
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+    volumes:
+      - 'db_testrail:/var/lib/mysql'
     depends_on:
       - srv
 
@@ -31,5 +33,7 @@ volumes:
   testrail:
     driver: local
   opt_testrail:
+    driver: local
+  db_testrail:
     driver: local
 
