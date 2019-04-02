@@ -2,12 +2,12 @@ version: '3'
 
 services:
   php:
-    image: cbreit/testrail-php:${PHP_IMAGE:-7.2-fpm}
+    image: cbreit/testrail-php:latest
     networks:
       - testrail
     volumes:
       - 'testrail:/var/www/testrail'
-      - 'opt_testrail:/opt/testrail'
+      - 'testrail_opt:/opt/testrail'
       #- './config/config.php:/var/www/testrail/config.php:ro'
 
   srv:
@@ -18,7 +18,7 @@ services:
       - "${HTTP_PORT:-8000}:80"
     volumes:
       - 'testrail:/var/www/testrail'
-      - 'opt_testrail:/opt/testrail'
+      - 'testrail_opt:/opt/testrail'
     depends_on:
       - php
       
@@ -33,7 +33,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'my-secret-password'
       MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
     volumes:
-      - 'db_testrail:/var/lib/mysql'
+      - 'testrail_db:/var/lib/mysql'
     depends_on:
       - srv
     command: ["${DB_ARGS:-}"]
@@ -45,8 +45,8 @@ networks:
 volumes:
   testrail:
     driver: local
-  opt_testrail:
+  testrail_opt:
     driver: local
-  db_testrail:
+  testrail_db:
     driver: local
 

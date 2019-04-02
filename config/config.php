@@ -25,8 +25,8 @@ define('DB_PASSWORD', 'testrail');
 | of TestRail.
 */
 
-define('LOG_PATH', '/var/www/testrail/logs/');
-define('AUDIT_PATH', '/var/www/testrail/audit/');
+define('LOG_PATH', '/opt/testrail/logs/');
+define('AUDIT_PATH', '/opt/testrail/audit/');
 
 /*
 |--------------------------------------------------------------------

@@ -2,7 +2,7 @@ ARG ARG_PHP_VERSION=7.2
 FROM php:${ARG_PHP_VERSION}-fpm
 
 ARG ARG_PHP_VERSION=7.2
-ARG ARG_IONCUBE_VERSION=10.2.4
+ARG ARG_IONCUBE_VERSION=10.3.2
 ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion70.zip
 
 LABEL vendor="TestRail" \
@@ -31,14 +31,12 @@ RUN \
 RUN \
   wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
   mkdir -p /var/www/testrail && \
-  mkdir -p /opt/testrail/attachments /opt/testrail/reports && \
+  mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
   unzip /tmp/testrail.zip -d /tmp && \
   rm /tmp/testrail.zip && \
   mv /tmp/testrail /var/www/ && \
   chown -R www-data:www-data /var/www/testrail && \
-  chown -R www-data:www-data /opt/testrail && \
-  mkdir -p /var/www/testrail/logs  && chown www-data:www-data /var/www/testrail/logs && \
-  mkdir -p /var/www/testrail/audit && chown www-data:www-data /var/www/testrail/audit
+  chown -R www-data:www-data /opt/testrail
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
@@ -53,4 +51,5 @@ COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]
 CMD ["php-fpm"]
 
+WORKDIR /var/www/testrail
 EXPOSE 9000

@@ -1,4 +1,4 @@
-ARG ARG_MYSQL_VERSION=latest
+ARG ARG_MYSQL_VERSION=5
 FROM mysql:${ARG_MYSQL_VERSION}
 
 LABEL vendor="TestRail" \
@@ -12,7 +12,6 @@ RUN \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY config.php /config.php
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 
 VOLUME /var/lib/mysql

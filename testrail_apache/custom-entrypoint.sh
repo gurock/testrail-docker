@@ -15,4 +15,4 @@ while /bin/true; do
 done &
 echo "##############"
 
-docker-php-entrypoint "$@"
+docker-php-entrypoint "$@"a

@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-if [ -z "$1" ] && [ ${#1} != 0 ]
+first_arg=$1
+echo "$firstarg"  ${#first_arg}
+
+if [ $# -gt 0 ] && [ "${#first_arg}" != 0 ]
   then
     for i in $@; do :; done
     dbDump=$i
@@ -9,7 +12,6 @@ if [ -z "$1" ] && [ ${#1} != 0 ]
     if [ "$dbDump" != "None" ]
       then
         wget --no-check-certificate -O /docker-entrypoint-initdb.d/db.sql $dbDump
-        mv -vn /config.php /var/www/testrail/config.php
 
       #remove last argument
       echo "###############################"

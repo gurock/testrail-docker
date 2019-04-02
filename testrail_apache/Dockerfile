@@ -1,8 +1,8 @@
-ARG ARG_PHP_VERSION=7.0
+ARG ARG_PHP_VERSION=7.2
 FROM php:${ARG_PHP_VERSION}-apache
 
-ARG ARG_IONCUBE_VERSION=10.2.4
-ARG ARG_PHP_VERSION=7.0
+ARG ARG_PHP_VERSION=7.2
+ARG ARG_IONCUBE_VERSION=10.3.2
 ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion70.zip
 
 LABEL vendor="TestRail" \
@@ -13,16 +13,32 @@ LABEL vendor="TestRail" \
 
 RUN \
     apt-get update && \
-    apt-get install -y zip && \
-    apt-get install -y wget && \
-    apt-get install -y unzip && \
-    apt-get install -y zlib1g-dev && \
-    apt-get install -y libcurl4-gnutls-dev && \
+    apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client && \
+    apt-get install -y --no-install-recommends zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev && \
     apt-get clean && \
-    docker-php-ext-install mysqli && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN \
+    docker-php-ext-install mbstring && \
+    if [ "x$ARG_PHP_VERSION" = "5."* ] ; then docker-php-ext-install mysql; \
+    else docker-php-ext-install mysqli; \
+    fi && \
     docker-php-ext-install curl && \
     docker-php-ext-install zip && \
-    rm -rf /var/lib/apt/lists/*
+    docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
+    docker-php-ext-install ldap
+
+RUN \
+  wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
+  mkdir -p /var/www/testrail && \
+  mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
+  unzip /tmp/testrail.zip -d /tmp && \
+  rm /tmp/testrail.zip && \
+  mv /tmp/testrail /var/www/ && \
+  chown -R www-data:www-data /var/www/testrail && \
+  chown -R www-data:www-data /opt/testrail
+
+COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN \
   wget  -O /tmp/ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
@@ -30,20 +46,6 @@ RUN \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
-
-COPY php.ini /usr/local/etc/php/conf.d/php.ini
-
-RUN \
-  wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
-  mkdir -p /var/www/testrail && \
-  mkdir -p /opt/testrail/attachments /opt/testrail/reports && \
-  unzip /tmp/testrail.zip -d /tmp && \
-  rm /tmp/testrail.zip && \
-  mv /tmp/testrail /var/www/ && \
-  chown -R www-data:www-data /var/www/testrail && \
-  chown -R www-data:www-data /opt/testrail && \
-  mkdir -p /var/www/testrail/logs  && chown www-data:www-data /var/www/testrail/logs && \
-  mkdir -p /var/www/testrail/audit && chown www-data:www-data /var/www/testrail/audit
 
 COPY apache_testrail.conf /etc/apache2/sites-enabled/000-default.conf
 

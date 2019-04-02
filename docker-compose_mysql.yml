@@ -1,23 +1,29 @@
 version: '3'
 
-networks:
-  testrail:
-    driver: bridge
-    
 services:
-  srv:
-    image: cbreit/testrail-apache:latest
+  php:
+    image: cbreit/testrail-php:latest
     networks:
       - testrail
-    ports:
-      - "${http_port:-8000}:80"
     volumes:
       - 'testrail:/var/www/testrail'
       - 'testrail_opt:/opt/testrail'
       #- './config/config.php:/var/www/testrail/config.php:ro'
+
+  srv:
+    image: cbreit/testrail-nginx:latest
+    networks:
+      - testrail
+    ports:
+      - "${HTTP_PORT:-8000}:80"
+    volumes:
+      - 'testrail:/var/www/testrail'
+      - 'testrail_opt:/opt/testrail'
+    depends_on:
+      - php
       
   db:
-    image: cbreit/testrail-mariadb:latest
+    image: cbreit/testrail-mysql:latest
     networks:
       - testrail
     environment:
@@ -31,6 +37,10 @@ services:
     depends_on:
       - srv
     command: ["${DB_ARGS:-}"]
+
+networks:
+  testrail:
+    driver: bridge
 
 volumes:
   testrail:
