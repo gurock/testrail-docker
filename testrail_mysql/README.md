@@ -1,4 +1,4 @@
-# Testrail mariadb image
+# Testrail mysql image
 
 To be extendeded...
 

@@ -23,8 +23,10 @@ services:
       MYSQL_USER: 'testrail'
       MYSQL_PASSWORD: 'testrail'
       MYSQL_DATABASE: 'testrail'
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+      MYSQL_ROOT_PASSWORD: 'my-secret-password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
     volumes:
+      - 'testrail:/var/www/testrail'
       - 'db_testrail:/var/lib/mysql'
     depends_on:
       - srv

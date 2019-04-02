@@ -1,8 +1,9 @@
-ARG ARG_PHP_VERSION=7.0
+ARG ARG_PHP_VERSION=7.2
 FROM php:${ARG_PHP_VERSION}-fpm
 
-ARG ARG_PHP_VERSION=7.0
+ARG ARG_PHP_VERSION=7.2
 ARG ARG_IONCUBE_VERSION=10.2.4
+ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion70.zip
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -12,9 +13,12 @@ LABEL vendor="TestRail" \
 
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends curl zip unzip wget mariadb-client && \
+    apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client && \
     apt-get install -y --no-install-recommends zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev && \
     apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN \
     docker-php-ext-install mbstring && \
     if [ "x$ARG_PHP_VERSION" = "5."* ] ; then docker-php-ext-install mysql; \
     else docker-php-ext-install mysqli; \
@@ -22,8 +26,19 @@ RUN \
     docker-php-ext-install curl && \
     docker-php-ext-install zip && \
     docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
-    docker-php-ext-install ldap && \
-    rm -rf /var/lib/apt/lists/*
+    docker-php-ext-install ldap
+
+RUN \
+  wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
+  mkdir -p /var/www/testrail && \
+  mkdir -p /opt/testrail/attachments /opt/testrail/reports && \
+  unzip /tmp/testrail.zip -d /tmp && \
+  rm /tmp/testrail.zip && \
+  mv /tmp/testrail /var/www/ && \
+  chown -R www-data:www-data /var/www/testrail && \
+  chown -R www-data:www-data /opt/testrail && \
+  mkdir -p /var/www/testrail/logs  && chown www-data:www-data /var/www/testrail/logs && \
+  mkdir -p /var/www/testrail/audit && chown www-data:www-data /var/www/testrail/audit
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 

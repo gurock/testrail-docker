@@ -18,6 +18,7 @@ RUN \
     apt-get install -y unzip && \
     apt-get install -y zlib1g-dev && \
     apt-get install -y libcurl4-gnutls-dev && \
+    apt-get clean && \
     docker-php-ext-install mysqli && \
     docker-php-ext-install curl && \
     docker-php-ext-install zip && \
@@ -30,15 +31,28 @@ RUN \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
 
+COPY php.ini /usr/local/etc/php/conf.d/php.ini
+
 RUN \
   wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
   mkdir -p /var/www/testrail && \
+  mkdir -p /opt/testrail/attachments /opt/testrail/reports && \
   unzip /tmp/testrail.zip -d /tmp && \
-  mv /tmp/testrail/* /var/www/html/ && \
-  mkdir -p /var/www/html/logs && chown www-data:www-data /var/www/html/logs && \
-  mkdir /etc/cron.d && echo '* * * * * www-data /usr/bin/php /var/www/html/task.php' >> /etc/cron.d/testrail && chmod +x /etc/cron.d/testrail
+  rm /tmp/testrail.zip && \
+  mv /tmp/testrail /var/www/ && \
+  chown -R www-data:www-data /var/www/testrail && \
+  chown -R www-data:www-data /opt/testrail && \
+  mkdir -p /var/www/testrail/logs  && chown www-data:www-data /var/www/testrail/logs && \
+  mkdir -p /var/www/testrail/audit && chown www-data:www-data /var/www/testrail/audit
+
+COPY apache_testrail.conf /etc/apache2/sites-enabled/000-default.conf
 
 VOLUME /opt/testrail/attachments
 VOLUME /opt/testrail/reports
 
+COPY custom-entrypoint.sh /custom-entrypoint.sh
+ENTRYPOINT ["/custom-entrypoint.sh"]
+CMD ["apache2-foreground"]
+
+WORKDIR /var/www/testrail
 EXPOSE 80
