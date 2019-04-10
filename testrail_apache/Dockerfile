@@ -49,8 +49,7 @@ RUN \
 
 COPY apache_testrail.conf /etc/apache2/sites-enabled/000-default.conf
 
-VOLUME /opt/testrail/attachments
-VOLUME /opt/testrail/reports
+VOLUME /opt/testrail/
 
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]

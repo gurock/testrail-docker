@@ -15,6 +15,5 @@ RUN \
 
 COPY http_testrail.conf /etc/nginx/conf.d/default.conf
 
-VOLUME /opt/testrail/attachments
-VOLUME /opt/testrail/reports
+VOLUME /opt/testrail/
 

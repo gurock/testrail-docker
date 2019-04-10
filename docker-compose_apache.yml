@@ -21,6 +21,7 @@ services:
     networks:
       - testrail
     environment:
+      DB_URL: '${DB_URL:-}'
       MYSQL_USER: 'testrail'
       MYSQL_PASSWORD: 'testrail'
       MYSQL_DATABASE: 'testrail'
@@ -30,7 +31,6 @@ services:
       - 'testrail_db:/var/lib/mysql'
     depends_on:
       - srv
-    command: ["${DB_ARGS:-}"]
 
 volumes:
   testrail:
