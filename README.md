@@ -23,8 +23,10 @@ To remove the instance, press `Ctrl+C` and then run `docker-compose down`.
 ## How to use the compose files
 
 ### The .env file
-It's necessary to create a local `.env` file, to specify user or machine specific variables 
-(more see [here](https://docs.docker.com/compose/env-file/)). Syntax is simple: e.g. 'CURRENT_UID=1000'
+It's suggested to create a local `.env` file, to specify user or machine specific variables 
+(more see [here](https://docs.docker.com/compose/env-file/)). Syntax is simple: e.g. 'HTTP_PORT=1000'
+
+Environment variables can also be set directly in the shell with the same syntax and then using  `docker-compose`.
 
 **Optional variables are:**  
 
@@ -35,7 +37,7 @@ It's necessary to create a local `.env` file, to specify user or machine specifi
     *(e.g. http://internal.yourcompany.com/5.7.sql)*
 
 ### Pre-populated databases and TestRails `config.php`
-Via the `DB_URL` variable, it's possible to provide a SQL-dump to be downloaded by the container, 
+Via the `DB_URL` variable, it's also possible to provide a SQL-dump to be downloaded by the container, 
 so TestRail is already pre-configured.
 For proper functionality, the `config.php` file needs to be provided for in this case by 'mounting' the file, 
 available in the 'config' folder, to '/var/www/testrail/config.php' (just have a look at the compose file; 
