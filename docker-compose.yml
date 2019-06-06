@@ -7,7 +7,7 @@ services:
       - testrail
     volumes:
       - 'testrail:/var/www/testrail'
-      - 'testrail_opt:/opt/testrail'
+      - './_opt:/opt/testrail'
       #- './config/config.php:/var/www/testrail/config.php:ro'
 
   srv:
@@ -18,7 +18,7 @@ services:
       - "${HTTP_PORT:-8000}:80"
     volumes:
       - 'testrail:/var/www/testrail'
-      - 'testrail_opt:/opt/testrail'
+      - './_opt:/opt/testrail'
     depends_on:
       - php
       
@@ -34,7 +34,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'my-secret-password'
       MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
     volumes:
-      - 'testrail_db:/var/lib/mysql'
+      - './_mysql:/var/lib/mysql'
     depends_on:
       - srv
 
