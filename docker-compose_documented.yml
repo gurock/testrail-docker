@@ -36,12 +36,10 @@ services:
       #- './_config/config.php:/var/www/testrail/config.php:ro'
 
       # DON'T DELETE OR MODIFY THIS
-      # this is a volume which is shared across the srv and the php service, because both need to access the TestRail files
+      # This are volumes which is shared across services. The location of the 'opt' volume, which contains attachments,
+      # reports, logs, and audit logs can be configured at the 'volumes' section at the end of this document
       - 'testrail_root:/var/www/testrail'
-
-      # This is a volume which maps the /opt folder from the container to the local '_opt' folder. '_opt' gets created if it does not exist.
-      # It's recommended to configure testrail to place reports, attachments, logs, and audit in this folder -- see our documentation for further information.
-      - './_opt:/opt/testrail'
+      - 'testrail_opt:/opt/testrail'
 
   # This is the 'webserver' service, which runs nginx; in case of Apache, the webserver and php are run in one service,
   # as Apache executes php within a module
@@ -63,7 +61,7 @@ services:
     volumes:
       # DON'T DELETE OR MODIFY THIS -- see above
       - 'testrail_root:/var/www/testrail'
-      - './_opt:/opt/testrail'
+      - 'testrail_opt:/opt/testrail'
 
 
       # If you would like to use HTTPS, an SSL certificate + key need to get created.
@@ -92,10 +90,9 @@ services:
       - "${DB_PORT:-33306}:3306"
 
     # The database contains stateful information. This information is locally stored by mysql or mariadb in the folder 'var/lib/mysql'.
-    # With this volume-mapping to the local folder '_mysql', the database is stored locally (and not in the container). So if the container gets
-    # destroyed, the database content is still available.
+    # See volumes mapping below
     volumes:
-      - './_mysql:/var/lib/mysql'
+      - 'testrail_mysql:/var/lib/mysql'
 
     # With these environment variables, the database is initialized upon its first start.
     # A database and a user with password are automatically created. The user is assigned full access rights to the created database.
@@ -123,8 +120,25 @@ networks:
   testrail:
     driver: bridge
 
-#DON'T DELETE -- This creates the testrail_root volume which connects the services
+#DON'T DELETE -- This creates volumes needed by testrail
+# testrail_root contains the testrail installation and is shared between the srv and php services
+# The 'testrail_opt' and 'testrail_mysql' volumes map to a local folder, as they contain stateful information
+# With this volume-mapping to e.g. the local folder '_mysql', the database is stored locally (and not in the container). So if the container gets
+# destroyed, the database content is still available. Same applies to the 'opt' folder storing attachments & co.
 volumes:
   testrail_root:
     driver: local
 
+  testrail_opt:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${OPT_PATH:-_opt}"
+      o: bind
+
+  testrail_mysql:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${MYSQL_PATH:-_mysql}"
+      o: bind

@@ -3,7 +3,7 @@ FROM php:${ARG_PHP_VERSION}-apache
 
 ARG ARG_PHP_VERSION=7.2
 ARG ARG_IONCUBE_VERSION=10.3.2
-ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion70.zip
+ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -46,8 +46,6 @@ RUN \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
-
-VOLUME /opt/testrail/
 
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf

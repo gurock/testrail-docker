@@ -1,6 +1,15 @@
 #!/bin/bash
 #set -e
 
+function createOptDirectory {
+    if [ ! -d $1 ]
+    then
+        echo "Creating " $1
+        mkdir -p $1
+    fi
+}
+
+
 rm -f /etc/apache2/sites-enabled/ssl_apache_testrail.conf
 cp /apache-conf/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
@@ -14,6 +23,13 @@ then
 
     cp -f /ssl_apache_testrail.conf /etc/apache2/sites-enabled/ssl_apache_testrail.conf
 fi
+
+createOptDirectory "/opt/testrail/attachments"
+createOptDirectory "/opt/testrail/reports"
+createOptDirectory "/opt/testrail/logs"
+createOptDirectory "/opt/testrail/audit"
+chown -R www-data:www-data /opt/testrail
+
 
 echo "##############"
 echo "Waiting for background task file"

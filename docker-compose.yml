@@ -17,7 +17,7 @@ services:
     volumes:
       #- './_config/_config.php:/var/www/testrail/_config.php:ro'
       - 'testrail_root:/var/www/testrail'
-      - '_opt:/opt/testrail'
+      - 'testrail_opt:/opt/testrail'
 
   db:
     image: cbreit/testrail-mysql:latest
@@ -26,7 +26,7 @@ services:
     networks:
       - testrail
     volumes:
-      - './_mysql:/var/lib/mysql'
+      - 'testrail_mysql:/var/lib/mysql'
     environment:
       MYSQL_USER:     "${DB_PWD:-testrail}"
       MYSQL_PASSWORD: "${DB_PWD:-testrail}"
@@ -43,3 +43,16 @@ volumes:
   testrail_root:
     driver: local
 
+  testrail_opt:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${OPT_PATH:-_opt}"
+      o: bind
+
+  testrail_mysql:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${MYSQL_PATH:-_mysql}"
+      o: bind
