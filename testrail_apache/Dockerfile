@@ -47,9 +47,17 @@ RUN \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
 
-COPY apache_testrail.conf /etc/apache2/sites-enabled/000-default.conf
-
 VOLUME /opt/testrail/
+
+RUN mkdir -p /apache-conf
+VOLUME /apache-conf
+
+RUN mkdir -p /etc/apache2/ssl
+VOLUME /etc/apache2/ssl
+
+COPY apache_testrail.conf /apache-conf/000-default.conf
+COPY ssl_apache_testrail.conf /apache-conf/ssl_apache_testrail.conf
+
 
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]

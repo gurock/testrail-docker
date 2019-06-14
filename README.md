@@ -24,7 +24,7 @@ To remove the instance, press `Ctrl+C` and then run `docker-compose down`.
 
 ### The .env file
 It's suggested to create a local `.env` file, to specify user or machine specific variables 
-(more see [here](https://docs.docker.com/compose/env-file/)). Syntax is simple: e.g. 'HTTP_PORT=1000'
+(more see [here](https://docs.docker.com/compose/env-file/)). Syntax is simple: e.g. 'HTTP_PORT=8000'
 
 Environment variables can also be set directly in the shell with the same syntax and then using  `docker-compose`.
 

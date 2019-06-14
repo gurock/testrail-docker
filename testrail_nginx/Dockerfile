@@ -7,13 +7,19 @@ LABEL vendor="TestRail" \
       type="TestRail nginx webserver" \
       description="This is a docker base image which contains a fully configured TestRail webserver."
 
-RUN \
-    apt-get update && \
-    apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /etc/nginx/ssl
+VOLUME /etc/nginx/ssl
 
-COPY http_testrail.conf /etc/nginx/conf.d/default.conf
+RUN mkdir -p /nginx-conf
+VOLUME /nginx-conf
 
-VOLUME /opt/testrail/
+COPY nginx_testrail.conf /nginx-conf/default.conf
+COPY ssl_nginx_testrail.conf /nginx-conf/ssl_testrail.conf
 
+COPY custom-entrypoint.sh /custom-entrypoint.sh
+RUN chown www-data:www-data /custom-entrypoint.sh
+
+ENTRYPOINT ["/custom-entrypoint.sh"]
+
+WORKDIR /var/www/testrail
+EXPOSE 80

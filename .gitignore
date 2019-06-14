@@ -13,3 +13,8 @@ a.out
 *.log
 *.zip
 .*.swp
+
+.env
+_mysql
+_opt
+*_bak

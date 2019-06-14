@@ -1,0 +1,130 @@
+version: '3'
+
+##############################################################################
+# This file is intended to explain the structure of the docker-compose files #
+# It's possible to execute it, but we recommend using one of the other       #
+# compose-files for production, as this one might be harder to read because  #
+# of all the documentation.                                                  #
+##############################################################################
+
+# Running TestRail needs a database, php processing, and a webserver
+# In case of Apache, the php-processing is done within the webserver, in cas of nginx it runs as a dedicated service
+# We therefore need 2 services when running Apache and 3 for nginx
+services:
+
+  # In case of nginx we need a dedicated php processing service
+  # All of these services (in this case php, srv, and db) also use the the name of the service as an internal hostname
+  # To reach the database from php, a simple 'ping db' works.
+  # When entering the database location in the TestRail installer, and the database also runs in a container, using 'db:3306' does the job.
+  php:
+
+    # This tells docker-compose which inage to use -- with the tag at the end (in this case :latest), the TestRail version to be used is defined
+    image: "cbreit/testrail-php:${TESTRAIL_VERSION:-latest}"
+
+    # The services need to communicate with each other; e.g. the php-service needs to access the database. The services are linked together
+    # with the 'testrail' network, which is only shared across the services defined in this compose file.
+    networks:
+      - testrail
+
+    # Volumes are a way to connect the containers filesystem to "the outside world". It is thus possible to map files or folders from the container
+    # to the local filesystem -- or the other way round; to map local files into the container
+    # As containers should not contain 'stateful' information, like database content, configuration files, or in case of TestRail, also reports,
+    # attachments and logs + audit logs, these should not be stored in the container (as they would get deleted when the container is destroyed).
+    volumes:
+      # This configuration file is needed when you have an already configured TestRail instance with a DB set up. It needs to get copied
+      # from the container to the '_config' folder first. Pls. read our documentation for the necessary steps.
+      #- './_config/config.php:/var/www/testrail/config.php:ro'
+
+      # DON'T DELETE OR MODIFY THIS
+      # this is a volume which is shared across the srv and the php service, because both need to access the TestRail files
+      - 'testrail_root:/var/www/testrail'
+
+      # This is a volume which maps the /opt folder from the container to the local '_opt' folder. '_opt' gets created if it does not exist.
+      # It's recommended to configure testrail to place reports, attachments, logs, and audit in this folder -- see our documentation for further information.
+      - './_opt:/opt/testrail'
+
+  # This is the 'webserver' service, which runs nginx; in case of Apache, the webserver and php are run in one service,
+  # as Apache executes php within a module
+  srv:
+    image: cbreit/testrail-nginx:latest
+
+    # This defines, that the 'php' service has to be started first, before this service is run
+    depends_on:
+      - php
+    networks:
+      - testrail
+
+    # This maps the internal port 80 (where the TestRail webserver is listening on) to the local port '8000',
+    # if the variable 'HTTP_PORT' is not specified (it's actually a simple port forwarding what's done here).
+    # The 'HTTP_PORT' environment variable can either be set in a .env file or as a variable directly in the shell.
+    # Pls. have a look at our documentation for further information regarding environment variables.
+    ports:
+      - "${HTTP_PORT:-8000}:80"
+    volumes:
+      # DON'T DELETE OR MODIFY THIS -- see above
+      - 'testrail_root:/var/www/testrail'
+      - './_opt:/opt/testrail'
+
+
+      # If you would like to use HTTPS, an SSL certificate + key need to get created.
+      # two files with the file-names 'certificate.crt' and 'key.pem' have to be placed in an 'ssl' folder, which
+      # has to be mapped to the location shown below
+      # The webserver configuration will use these files for running an HTTPS server
+      # To enable this functionality, the "SSL" environment variable needs to be set to 'true'
+      # - '/_ssl:/etc/nginx/ssl'
+      # for apache
+      #  - '/_ssl:/etc/apache2/ssl'
+
+    environment:
+      SSL: "{SSL:false}"
+
+  # The database service, which runs MySQL or MariaDB -- dependent on the image specified.
+  db:
+    image: cbreit/testrail-mariadb:latest
+    depends_on:
+      - srv
+    networks:
+      - testrail
+
+    # Similar to the srv service, you might want to map the database port. This can be done in the same manner as mentioned above.
+    # We recommend using a 'DB_PORT' environment variable for this
+    ports:
+      - "${DB_PORT:-33306}:3306"
+
+    # The database contains stateful information. This information is locally stored by mysql or mariadb in the folder 'var/lib/mysql'.
+    # With this volume-mapping to the local folder '_mysql', the database is stored locally (and not in the container). So if the container gets
+    # destroyed, the database content is still available.
+    volumes:
+      - './_mysql:/var/lib/mysql'
+
+    # With these environment variables, the database is initialized upon its first start.
+    # A database and a user with password are automatically created. The user is assigned full access rights to the created database.
+    # This image is based on the official mysql/mariadb images -- more information is available
+    # in the description here: https://hub.docker.com/_/mariadb
+    # The default value for user, password, and database-name is: testrail -- these values can be overridden by setting the
+    # following environment variables: DB_USER, DB_PWD, DB_NAME
+    # A root password for the database is also initialized with 'my-secret-password' -- it can be overridden by setting: DB_ROOT_PWD
+    environment:
+      MYSQL_USER: "${DB_USER:-testrail}"
+      MYSQL_PASSWORD: "${DB_PWD:-testrail}"
+      MYSQL_DATABASE: "${DB_NAME:-testrail}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
+
+      # It's also possible to use a sqldump file for database initialization. Simply provide a URL in the environment
+      # variable, where the .sql file can be downloaded from (it's not possible to use a local file path).
+      # Hint: This might be handy if you need to restore a db from a .sql file. It's therefore recommended to create e.g.
+      # a cron job which creates a sql-dump in regular intervals.
+      DB_URL: '${DB_URL:-}'
+
+
+#DON'T DELETE -- This creates the network which connects all services
+networks:
+  testrail:
+    driver: bridge
+
+#DON'T DELETE -- This creates the testrail_root volume which connects the services
+volumes:
+  testrail_root:
+    driver: local
+
