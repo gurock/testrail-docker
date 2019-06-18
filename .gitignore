@@ -14,7 +14,8 @@ a.out
 *.zip
 .*.swp
 
-.env
-_mysql
-_opt
+.env*
+_mysql*
+_opt*
 *_bak
+support-info.txt

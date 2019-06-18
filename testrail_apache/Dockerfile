@@ -32,9 +32,8 @@ RUN \
   wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
   mkdir -p /var/www/testrail && \
   mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
-  unzip /tmp/testrail.zip -d /tmp && \
+  unzip /tmp/testrail.zip -d /var/www/ && \
   rm /tmp/testrail.zip && \
-  mv /tmp/testrail /var/www/ && \
   chown -R www-data:www-data /var/www/testrail && \
   chown -R www-data:www-data /opt/testrail
 
