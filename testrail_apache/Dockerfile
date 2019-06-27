@@ -30,7 +30,7 @@ RUN \
 
 RUN \
   wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
-  mkdir -p /var/www/testrail && \
+  mkdir -p /var/www/testrail /var/www/testrail/config && \
   mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
   unzip /tmp/testrail.zip -d /var/www/ && \
   rm /tmp/testrail.zip && \
@@ -55,10 +55,14 @@ VOLUME /etc/apache2/ssl
 COPY apache_testrail.conf /apache-conf/000-default.conf
 COPY ssl_apache_testrail.conf /apache-conf/ssl_apache_testrail.conf
 
-
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]
 CMD ["apache2-foreground"]
+
+RUN \
+    touch /var/www/testrail/config/testfile && \
+    mkdir /var/www/testrail/config/lalala
+
 
 WORKDIR /var/www/testrail
 EXPOSE 80

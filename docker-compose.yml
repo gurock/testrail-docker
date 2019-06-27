@@ -16,8 +16,10 @@ services:
       - "${HTTP_PORT:-8000}:80"
     volumes:
       #- './_config/config.php:/var/www/testrail/config.php:ro'
+      - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_root:/var/www/testrail'
-#      - 'testrail_opt:/opt/testrail'
+      - 'testrail_opt:/opt/testrail'
+
 
   db:
     image: cbreit/testrail-mysql:latest
@@ -43,16 +45,23 @@ volumes:
   testrail_root:
     driver: local
 
-#  testrail_opt:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      device: "$PWD/${OPT_PATH:-_opt}"
-#      o: bind
+  testrail_opt:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${OPT_PATH:-_opt}"
+      o: bind
 
   testrail_mysql:
     driver: local
     driver_opts:
       type: none
       device: "$PWD/${MYSQL_PATH:-_mysql}"
+      o: bind
+
+  testrail_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${CONFIG_PATH:-_config}"
       o: bind

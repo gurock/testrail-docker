@@ -30,6 +30,8 @@ createOptDirectory "/opt/testrail/logs"
 createOptDirectory "/opt/testrail/audit"
 chown -R www-data:www-data /opt/testrail
 
+chown -R www-data:www-data /var/www/testrail/config
+
 
 echo "##############"
 echo "Waiting for background task file"
