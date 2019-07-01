@@ -8,19 +8,30 @@
 
 version: '3'
 services:
-  srv:
-    image: "cbreit/testrail-apache:${TESTRAIL_VERSION:-latest}"
+  php:
+    image: "cbreit/testrail-php:${TESTRAIL_VERSION:-latest}"
     networks:
       - testrail
-    ports:
-      - "${HTTP_PORT:-8000}:80"
     volumes:
       - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_root:/var/www/testrail'
       - 'testrail_opt:/opt/testrail'
 
+  srv:
+    image: cbreit/testrail-nginx:latest
+    depends_on:
+      - php
+    networks:
+      - testrail
+    ports:
+      - "${HTTP_PORT:-8000}:80"
+    volumes:
+      - 'testrail_root:/var/www/testrail'
+      - 'testrail_opt:/opt/testrail'
+
+
   db:
-    image: cbreit/testrail-mysql:latest
+    image: cbreit/testrail-mariadb:latest
     depends_on:
       - srv
     networks:
@@ -28,7 +39,7 @@ services:
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
     environment:
-      MYSQL_USER:     "${DB_USER:-testrail}"
+      MYSQL_USER: "${DB_USER:-testrail}"
       MYSQL_PASSWORD: "${DB_PWD:-testrail}"
       MYSQL_DATABASE: "${DB_NAME:-testrail}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"

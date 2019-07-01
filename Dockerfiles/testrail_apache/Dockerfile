@@ -3,7 +3,14 @@ FROM php:${ARG_PHP_VERSION}-apache
 
 ARG ARG_PHP_VERSION=7.2
 ARG ARG_IONCUBE_VERSION=10.3.2
-ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion70.zip
+ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
+
+ENV TR_DEFAULT_TASK_EXECUTION=60
+ENV TR_CONFIGPATH="/var/www/testrail/config/"
+ENV TR_DEFAULT_LOG_DIR="/opt/testrail/logs/"
+ENV TR_DEFAULT_AUDIT_DIR="/opt/testrail/audit/"
+ENV TR_DEFAULT_REPORT_DIR="/opt/testrail/reports/"
+ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -32,9 +39,8 @@ RUN \
   wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
   mkdir -p /var/www/testrail && \
   mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
-  unzip /tmp/testrail.zip -d /tmp && \
+  unzip /tmp/testrail.zip -d /var/www/ && \
   rm /tmp/testrail.zip && \
-  mv /tmp/testrail /var/www/ && \
   chown -R www-data:www-data /var/www/testrail && \
   chown -R www-data:www-data /opt/testrail
 
@@ -47,9 +53,14 @@ RUN \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
 
-COPY apache_testrail.conf /etc/apache2/sites-enabled/000-default.conf
+RUN mkdir -p /apache-conf
+VOLUME /apache-conf
 
-VOLUME /opt/testrail/
+RUN mkdir -p /etc/apache2/ssl
+VOLUME /etc/apache2/ssl
+
+COPY apache_testrail.conf /apache-conf/000-default.conf
+COPY ssl_apache_testrail.conf /apache-conf/ssl_apache_testrail.conf
 
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]

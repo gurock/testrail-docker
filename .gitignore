@@ -12,4 +12,11 @@ a.out
 *.test
 *.log
 *.zip
+*.tar.gz
 .*.swp
+
+.env*
+_mysql*
+_opt*
+*_bak
+support-info.txt
