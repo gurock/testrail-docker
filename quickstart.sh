@@ -60,7 +60,7 @@ echo "The database will be stored in the local folders '_mysql' and files create
 
 dbFolder=_mysql
 dbFiles=(./_mysql/*)
-shopt -s nullglob dotglob
+#shopt -s nullglob dotglob
 if [ ${#dbFiles[@]} -gt 0 ]; then
     echo " ### The db-folder already contains files -- moving the folder to the backup-folder now (pls delete it later if you don't need it anymore)"
 
