@@ -7,8 +7,9 @@ function createOptDirectory {
         echo "Creating " $1
         mkdir -p $1
     fi
-}
 
+    chown -R www-data:www-data $1
+}
 
 rm -f /etc/apache2/sites-enabled/ssl_apache_testrail.conf
 cp /apache-conf/000-default.conf /etc/apache2/sites-enabled/000-default.conf
@@ -24,11 +25,11 @@ then
     cp -f /ssl_apache_testrail.conf /etc/apache2/sites-enabled/ssl_apache_testrail.conf
 fi
 
-createOptDirectory "/opt/testrail/attachments"
-createOptDirectory "/opt/testrail/reports"
-createOptDirectory "/opt/testrail/logs"
-createOptDirectory "/opt/testrail/audit"
-chown -R www-data:www-data /opt/testrail
+createOptDirectory $TR_DEFAULT_LOG_DIR
+createOptDirectory $TR_DEFAULT_AUDIT_DIR
+createOptDirectory $TR_DEFAULT_REPORT_DIR
+createOptDirectory $TR_DEFAULT_ATTACHMENT_DIR
+
 
 chown -R www-data:www-data /var/www/testrail/config
 
@@ -43,7 +44,7 @@ done
 echo "Starting background task"
 while /bin/true; do
     php /var/www/testrail/task.php || true
-    sleep 60
+    sleep $TR_DEFAULT_TASK_EXECUTION
 done &
 echo "##############"
 

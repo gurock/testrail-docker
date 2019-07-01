@@ -3,14 +3,20 @@
 timeStamp=$(date "+%Y.%m.%d-%H.%M.%S")
 dbFolder=_mysql
 optFolder=_opt
+confFolder=_config
+
+backupDir=backup
+mkdir -p  $backupDir
 
 echo
 echo "###########################################################################################"
 echo " TestRail quick upgrade"
-echo " This script will help you to upgrade TestRail quickly."
+echo " This script will help you to upgrade TestRail."
 echo " It currently only works with the 'standard docker-compose.yml' file , which uses Apache."
 echo " !! Important: If you're running nginx, you need to do the update manually for now."
-echo "###########################################################################################"
+echo
+echo " Please be aware that you will need 'sudo' installed to run this script."
+echo "###################################################################################"
 echo
 
 read -p "Press 'Enter' to continue (or Ctrl+C to abort)"
@@ -38,9 +44,25 @@ else
     fi
 fi
 
+echo
+echo "###########################################################################################"
+echo " If your're upgrading from a a docker applicance, simply continue. Otherwise, do these steps:"
+echo "   * Ensure that the 'config.php' file is in the '_config folder'."
+echo "   * Copy the content of /var/lib/mysql to '_mysql'"
+echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
+echo "   * Copy/Move your attachment, reports, logs, and audit folders into '_opt'."
+echo
+echo " When you're done with these steps, simply continue."
+echo "###################################################################################"
+echo
+
+
+read -p "Press 'Enter' to continue (or Ctrl+C to abort)"
+echo
+
 
 echo "Creating backup file"
-sudo tar czf "testrail-backup-${timeStamp}".tar.gz ./_opt ./_mysql ./_config/config.php
+sudo tar czf "${backupDir}/testrail-backup-${timeStamp}".tar.gz $optFolder $dbFolder $confFolder
 
 
 echo "Getting new TestRail version and then restarting TestRail"

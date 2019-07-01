@@ -12,6 +12,7 @@ a.out
 *.test
 *.log
 *.zip
+*.tar.gz
 .*.swp
 
 .env*

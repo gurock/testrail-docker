@@ -13,7 +13,7 @@ services:
     networks:
       - testrail
     volumes:
-      #- './_config/config.php:/var/www/testrail/config.php:ro'
+      - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_root:/var/www/testrail'
       - 'testrail_opt:/opt/testrail'
 
@@ -66,4 +66,11 @@ volumes:
     driver_opts:
       type: none
       device: "$PWD/${MYSQL_PATH:-_mysql}"
+      o: bind
+
+  testrail_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${CONFIG_PATH:-_config}"
       o: bind

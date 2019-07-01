@@ -7,6 +7,8 @@ echo " This script will help you to quickly start a TestRail instance and will"
 echo " populate a '.env' file with the neccessary configuration values."
 echo " For more advanced configuration please directly modify the .env file and utilize"
 echo " docker-compose directly."
+echo
+echo " Please be aware that you will need 'sudo' installed to run this script."
 echo "###################################################################################"
 echo
 
@@ -14,12 +16,18 @@ echo
 read -p "Press 'Enter' to continue (or Ctrl+C to abort)"
 echo
 
+#####################################
+# check if TestRail is already running
+
+timeStamp=$(date "+%Y.%m.%d-%H.%M.%S")
 dockerOutput=$(docker ps | grep testrail)
+backupDir=backup
+mkdir -p  $backupDir
 
 if [ -n "${dockerOutput}" ];
 then
    echo " ### Seems like a TestRail instance is already running"
-   echo "   To shut it down run 'docker-compose down -v' and then call this script again."
+   echo "   To shut it down run 'docker-compose down -v' in this folder and then call this script again."
    echo
    read -n1 -r -p "Press 'c' to continue or any other key to abort..." key
 
@@ -33,15 +41,8 @@ else
 fi
 
 
-envFile=.env
-timeStamp=$(date "+%Y.%m.%d-%H.%M.%S")
-if test -f "$envFile"; then
-    echo "A '.env' file already exists -- it will be saved and we'll create a new one"
-
-    mv .env .env_$timeStamp
-fi
-
-touch .env
+#####################################
+# database
 
 echo "An empty database named 'testrail' is automatically created together with the user 'testrail'."
 echo "In succession, please enter a password for this user.
@@ -54,12 +55,6 @@ echo "The database also needs a secure root password (needed for debugging/emerg
 echo
 read -p "Enter a database root password: "  root_pwd
 
-
-echo "DB_USER=testrail" >> .env
-echo "DB_NAME=testrail" >> .env
-echo "DB_PWD=${pwd}"    >> .env
-echo "DB_ROOT_PWD=${root_pwd}" >> .env
-
 echo
 echo "The database will be stored in the local folders '_mysql' and files created by TestRail will be placed in '_opt'."
 
@@ -67,22 +62,48 @@ dbFolder=_mysql
 dbFiles=(./_mysql/*)
 shopt -s nullglob dotglob
 if [ ${#dbFiles[@]} -gt 0 ]; then
-    echo " ### The db-folder already contains files -- saving the folder now (pls delete it later if you don't need it anymore)"
+    echo " ### The db-folder already contains files -- moving the folder to the backup-folder now (pls delete it later if you don't need it anymore)"
 
-    mv $dbFolder "${dbFolder}_${timeStamp}"
+    sudo mv $dbFolder $backupDir/"${dbFolder}_${timeStamp}"
     mkdir -p $dbFolder
 fi
 
+#####################################
+# .env
+
+envFile=.env
+if test -f "$envFile"; then
+    echo "A '.env' file already exists -- it will be saved and we'll create a new one"
+
+    mv .env $backupDir/.env_$timeStamp
+fi
+
+touch .env
+httpPort=8000
+echo "HTTP_PORT=${httpPort}"  >> .env
+echo "DB_USER=testrail" >> .env
+echo "DB_NAME=testrail" >> .env
+echo "DB_PWD=${pwd}"    >> .env
+echo "DB_ROOT_PWD=${root_pwd}" >> .env
 echo "OPT_PATH=_opt"  >> .env
 echo "MYSQL_PATH=_mysql"  >> .env
 echo "TESTRAIL_VERSION=latest" >> .env
 
+#####################################
+# config.php
+configFile=_config/config.php
+if test -f "$configFile"; then
+    echo "A 'config.php' file already exists -- it will be saved and a new one will be created during the installation"
+
+    sudo mv $configFile $backupDir/config.php_$timeStamp
+fi
+
+#####################################
+# starting TestRail
 
 echo
-echo "TestRail will be started now with HTTP and will listen on port 8000."
-httpPort=8000
+echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
-echo "HTTP_PORT=${httpPort}"  >> .env
 
 docker-compose up -d
 sleep 5
@@ -93,6 +114,9 @@ echo
 echo "TestRail should be available now on http://localhost:$httpPort"
 echo
 echo "If your firewall is not blocking the port, it should also be reachable via:"
+
+#####################################
+# getting network adapters IPs to quickly provide TestRail links
 
 netAdapters=$(ip -o link show | awk -F': ' '{print $2}')
 (IFS='
@@ -120,11 +144,7 @@ echo "    Password:    <The user password you've entered before>"
 
 echo
 echo "  Application Settings"
-echo "    Attachment Directory:    '/opt/testrail/attachments'"
-echo "    Report Directory:        '/opt/testrail/reports'"
-echo "    Log Directory:           '/opt/testrail/logs'"
-echo "    Audit Directory:         '/opt/testrail/audit'"
-
+echo "    - Simply leave the default values for the folders 'logs, reports, attachments and audit'."
 
 echo
 echo

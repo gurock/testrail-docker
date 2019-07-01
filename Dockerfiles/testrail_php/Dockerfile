@@ -6,6 +6,13 @@ ARG ARG_PHP_VERSION=7.2
 ARG ARG_IONCUBE_VERSION=10.3.2
 ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
 
+ENV TR_DEFAULT_TASK_EXECUTION=60
+ENV TR_CONFIGPATH="/var/www/testrail/config/"
+ENV TR_DEFAULT_LOG_DIR="/opt/testrail/logs/"
+ENV TR_DEFAULT_AUDIT_DIR="/opt/testrail/audit/"
+ENV TR_DEFAULT_REPORT_DIR="/opt/testrail/reports/"
+ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
+
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
       email="cbreitwieser@ranorex.com" \
