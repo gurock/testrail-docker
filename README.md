@@ -20,7 +20,7 @@ Finish the installation through the web UI (use the values printed by installer 
      
 ## Quick start using docker-compose
 
-The compose file if configured via environment variables -- it's suggested to use a .env file. More about such an .env file is available [here](https://docs.docker.com/compose/env-file/).
+The compose file is configured via environment variables -- it's suggested to use a .env file. More about such an .env file is available [here](https://docs.docker.com/compose/env-file/).
 
   * Create a `.env` file with at least the mandatory variables for:
     * DB_USER
