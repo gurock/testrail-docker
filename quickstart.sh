@@ -72,6 +72,24 @@ done
 echo ""
 
 #####################################
+# testrail version
+
+echo "These TestRail versions are available"
+echo
+wget -q https://registry.hub.docker.com/v1/repositories/testrail/apache/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'
+echo
+read -r -p "Press 'l' to use 'latest', 'b' for 'beta' or type in the version you want to use: " version
+echo
+
+if [ "$version" = 'l' ]; then
+    testrailVersion="latest"
+elif [ "$version" = 'b' ]; then
+    testrailVersion="beta"
+else
+    testrailVersion=$version
+fi
+
+#####################################
 # database
 
 echo
@@ -122,7 +140,7 @@ echo "DB_PWD=${pwd}"    >> .env
 echo "DB_ROOT_PWD=${root_pwd}" >> .env
 echo "OPT_PATH=${optFolder}"  >> .env
 echo "MYSQL_PATH=${dbFolder}"  >> .env
-echo "TESTRAIL_VERSION=latest" >> .env
+echo "TESTRAIL_VERSION=${testrailVersion}" >> .env
 
 #####################################
 # config.php
