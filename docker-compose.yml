@@ -9,7 +9,8 @@
 version: '3'
 services:
   srv:
-    image: "cbreit/testrail-apache:${TESTRAIL_VERSION:-latest}"
+    image: "testrail/apache:${TESTRAIL_VERSION:-latest}"
+    restart: unless-stopped
     networks:
       - testrail
     ports:
@@ -20,7 +21,8 @@ services:
       - 'testrail_opt:/opt/testrail'
 
   db:
-    image: cbreit/testrail-mysql:latest
+    image: testrail/mysql:latest
+    restart: unless-stopped
     depends_on:
       - srv
     networks:

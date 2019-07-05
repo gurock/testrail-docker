@@ -19,7 +19,7 @@ services:
   php:
 
     # This tells docker-compose which inage to use -- with the tag at the end (in this case :latest), the TestRail version to be used is defined
-    image: "cbreit/testrail-php:${TESTRAIL_VERSION:-latest}"
+    image: "testrail/php:${TESTRAIL_VERSION:-latest}"
 
     # The services need to communicate with each other; e.g. the php-service needs to access the database. The services are linked together
     # with the 'testrail' network, which is only shared across the services defined in this compose file.
@@ -44,7 +44,7 @@ services:
   # This is the 'webserver' service, which runs nginx; in case of Apache, the webserver and php are run in one service,
   # as Apache executes php within a module
   srv:
-    image: cbreit/testrail-nginx:latest
+    image: testrail/nginx:latest
 
     # This defines, that the 'php' service has to be started first, before this service is run
     depends_on:
@@ -78,7 +78,7 @@ services:
 
   # The database service, which runs MySQL or MariaDB -- dependent on the image specified.
   db:
-    image: cbreit/testrail-mariadb:latest
+    image: testrail/mariadb:latest
     depends_on:
       - srv
     networks:

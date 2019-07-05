@@ -27,7 +27,7 @@ echo " -- assuming the DB is in _mysql and the reports/attachments/... files in 
 echo
 
 echo "These TestRail versions are available"
-wget -q https://registry.hub.docker.com/v1/repositories/cbreit/testrail-apache/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'
+wget -q https://registry.hub.docker.com/v1/repositories/testrail/apache/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'
 echo
 
 read -r -p "Press 'l' to continue with 'latest' or type in the version you want to use: " version

@@ -9,7 +9,8 @@
 version: '3'
 services:
   php:
-    image: "cbreit/testrail-php:${TESTRAIL_VERSION:-latest}"
+    image: "testrail/php:${TESTRAIL_VERSION:-latest}"
+    restart: unless-stopped
     networks:
       - testrail
     volumes:
@@ -18,7 +19,8 @@ services:
       - 'testrail_opt:/opt/testrail'
 
   srv:
-    image: cbreit/testrail-nginx:latest
+    image: testrail/nginx:latest
+    restart: unless-stopped
     depends_on:
       - php
     networks:
@@ -31,7 +33,8 @@ services:
 
 
   db:
-    image: cbreit/testrail-mariadb:latest
+    image: testrail/mariadb:latest
+    restart: unless-stopped
     depends_on:
       - srv
     networks:

@@ -18,5 +18,7 @@ a.out
 .env*
 _mysql*
 _opt*
+_config/config.php
+backup/
 *_bak
 support-info.txt
