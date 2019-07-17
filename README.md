@@ -2,14 +2,16 @@
 
 ## What's in this repository?
 This repo contains Dockerfiles and compose files to spawn TestRail in docker containers. 
-The compose files rely on public available TestRail images available [here](https://hub.docker.com/u/cbreit).
+The compose files rely on public available TestRail images available [here](https://hub.docker.com/r/testrail/apache).
 
 ## Requirements
   * [Install docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) +
     [docker-compose](https://docs.docker.com/compose/install/) (on Linux, using `pip` is recommended)
+  * Some basic understanding of docker _(e.g knowing what containers, images, detached mode, ... are)_ <br/>
+    &rarr; Official "Get Started" available [here](https://docs.docker.com/get-started)
   * Optional: If you're using the `quickstart.sh` script, also install `sudo` and  `ip` (usually pre-installed on most systems)
   
-## Real quick start
+## Quick start with script
   * Run `quickstart.sh`
   * Type in two passwords -- one for the "normal" database user and one for root
   * Wait a few moments -- TestRail will be downloaded and set up
@@ -18,7 +20,7 @@ TestRail should be accessible via:  [http://localhost:8000](http://localhost:800
 
 Finish the installation through the web UI (use the values printed by installer at the end)
      
-## Quick start using docker-compose
+## Running Testrail using docker-compose
 
 The compose file is configured via environment variables -- it's suggested to use a .env file. More about such an .env file is available [here](https://docs.docker.com/compose/env-file/).
 
@@ -35,6 +37,16 @@ TestRail should be accessible via:  [http://localhost:8000](http://localhost:800
 Re-enter the values you specified in the .env file when the TestRail installer asks for the database settings.
 To remove the instance, press `Ctrl+C` and then run `docker-compose down`. 
 
+---
+
+## Running TestRail with an external DB 
+
+If you'd like to just run TestRail and use a DB hosted on another server, in the cloud, starting TestRail is simple.
+In this case, only `docker` is needed (not 'docker-compose', as mentioned above).
+
+```
+docker run -d --name testrail -p 8000:80 -v $PWD/_opt:/opt/testrail -v $PWD/_config:/var/www/testrail/config testrail/apache:latest
+```
 ---
 
 ## How to use the compose files
@@ -75,13 +87,11 @@ docker-compose down
          still cause some side effects.* </sub>  
   - `-f` *(file)*  Can be used to specify a different compose file (by default docker-compose.yml is used)
   - `-p` *(project)* Has to be used if multiple TestRail instances should be started.  
-         <sub>
-         <details><summary>Details</summary>   
+         <details open><summary>Details</summary>   
          Otherwise docker-compose with interact with an already running container.
          The name of the folder docker-compose is started in (in this case 'internal-docker') is used as a 
          project name and is prepended to all spawned containers.
          </details>
-         </sub>
 
 **Recommendation:** Use `docker-compose down -v`, as it removes named and anonymous volumes!
 

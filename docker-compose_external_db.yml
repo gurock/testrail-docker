@@ -19,23 +19,6 @@ services:
       - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_opt:/opt/testrail'
 
-  db:
-    image: testrail/mysql:latest
-    restart: unless-stopped
-    depends_on:
-      - srv
-    networks:
-      - testrail
-    volumes:
-      - 'testrail_mysql:/var/lib/mysql'
-    environment:
-      MYSQL_USER:     "${DB_USER:-testrail}"
-      MYSQL_PASSWORD: "${DB_PWD:-testrail}"
-      MYSQL_DATABASE: "${DB_NAME:-testrail}"
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
-
-
 networks:
   testrail:
     driver: bridge
@@ -46,13 +29,6 @@ volumes:
     driver_opts:
       type: none
       device: "$PWD/${OPT_PATH:-_opt}"
-      o: bind
-
-  testrail_mysql:
-    driver: local
-    driver_opts:
-      type: none
-      device: "$PWD/${MYSQL_PATH:-_mysql}"
       o: bind
 
   testrail_config:
