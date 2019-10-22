@@ -12,6 +12,7 @@ ENV TR_DEFAULT_LOG_DIR="/opt/testrail/logs/"
 ENV TR_DEFAULT_AUDIT_DIR="/opt/testrail/audit/"
 ENV TR_DEFAULT_REPORT_DIR="/opt/testrail/reports/"
 ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
+ENV OPENSSL_CONF=/etc/ssl/
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -21,8 +22,8 @@ LABEL vendor="TestRail" \
 
 RUN \
     apt-get update && \
-    apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client && \
-    apt-get install -y --no-install-recommends zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev && \
+    apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
+    apt-get install -y --no-install-recommends zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -48,7 +49,7 @@ RUN \
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN \
-  wget  -O /tmp/ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
+  wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
   tar -xzf /tmp/ioncube.tar.gz -C /tmp && \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
