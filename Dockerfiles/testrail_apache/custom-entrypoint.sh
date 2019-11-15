@@ -22,7 +22,7 @@ then
     echo "####################################################"
     echo
 
-    cp -f /ssl_apache_testrail.conf /etc/apache2/sites-enabled/ssl_apache_testrail.conf
+    cp -f /apache-conf/ssl_apache_testrail.conf /etc/apache2/sites-enabled/ssl_apache_testrail.conf
 fi
 
 createOptDirectory $TR_DEFAULT_LOG_DIR
