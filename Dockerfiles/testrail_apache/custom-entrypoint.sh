@@ -22,6 +22,8 @@ then
     echo "####################################################"
     echo
 
+	# Enable SSL
+	a2enmod ssl
     cp -f /apache-conf/ssl_apache_testrail.conf /etc/apache2/sites-enabled/ssl_apache_testrail.conf
 fi
 
