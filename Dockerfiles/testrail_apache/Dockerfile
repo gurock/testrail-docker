@@ -62,6 +62,7 @@ VOLUME /etc/apache2/ssl
 
 COPY apache_testrail.conf /apache-conf/000-default.conf
 COPY ssl_apache_testrail.conf /apache-conf/ssl_apache_testrail.conf
+COPY .htaccess /apache-conf/.htaccess
 
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]

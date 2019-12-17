@@ -22,7 +22,12 @@ then
     echo "####################################################"
     echo
 
+	# Enable SSL
+	a2enmod ssl
     cp -f /apache-conf/ssl_apache_testrail.conf /etc/apache2/sites-enabled/ssl_apache_testrail.conf
+	# Perform redirection from HTTP to HTTPS
+	a2enmod rewrite
+	cp -f /apache-conf/.htaccess /var/www/testrail/.htaccess
 fi
 
 createOptDirectory $TR_DEFAULT_LOG_DIR
