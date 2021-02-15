@@ -31,6 +31,12 @@ echo "-----------------------------------------------------" >> $supportFile
 
 echo "" >> $supportFile
 echo "-----------------------------------------------------" >> $supportFile
+echo "_cassandra directory:" >> $supportFile
+ls -ahls ./_cassandra >> $supportFile
+echo "-----------------------------------------------------" >> $supportFile
+
+echo "" >> $supportFile
+echo "-----------------------------------------------------" >> $supportFile
 echo "docker info:" >> $supportFile
 docker info >> $supportFile
 echo "-----------------------------------------------------" >> $supportFile

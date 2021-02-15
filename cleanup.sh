@@ -2,9 +2,9 @@
 
 echo
 echo "##################################################################################"
-echo " TestRail clenup"
+echo " TestRail cleanup"
 echo
-echo " This script will do a cleanup and remove eveything in _opt, _mysql + the config.php and the .env file."
+echo " This script will do a cleanup and remove eveything in _opt, _mysql, _cassandra + the config.php and the .env file."
 echo " It will also shut down TestRail"
 echo " You will need 'sudo' installed to run this script."
 echo
@@ -18,7 +18,7 @@ echo
 read -p "   Type 'yes' to continue or use 'Ctrl+C' to abort: " confirm
 
 if [ "$confirm" = 'yes' ]; then
-    sudo rm -rf _opt/* _mysql/* _config/config.php
+    sudo rm -rf _opt/* _mysql/* _cassandra/* _config/config.php
     docker-compose down -v
 else
     echo
