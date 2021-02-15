@@ -46,9 +46,11 @@ fi
 
 echo
 echo "###########################################################################################"
-echo " If your're upgrading from a a docker applicance, simply continue. Otherwise, do these steps:"
+echo " If you're upgrading from a docker applicance, simply continue. Otherwise, do these steps:"
 echo "   * Ensure that the 'config.php' file is in the '_config folder'."
 echo "   * Copy the content of /var/lib/mysql to '_mysql'"
+echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
+echo "   * Copy the content of /var/lib/cassandra to '_cassandra'"
 echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
 echo "   * Copy/Move your attachment, reports, logs, and audit folders into '_opt'."
 echo

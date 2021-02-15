@@ -114,6 +114,22 @@ services:
       # a cron job which creates a sql-dump in regular intervals.
       DB_URL: '${DB_URL:-}'
 
+  # The Cassandra service
+  cassandra:
+    image: testrail/cassandra:latest
+    networks:
+      - testrail
+
+    # Similar to the srv service, you might want to map the Cassandra port. This can be done in the same manner as mentioned above.
+    # We recommend using a 'CASSANDRA_PORT' environment variable for this
+    ports:
+      - "${CASSANDRA_PORT:-39042}:9042"
+
+    # Cassandra contains stateful information. This information is locally stored by Cassandra in the folder '/var/lib/cassandra'.
+    # See volumes mapping below
+    volumes:
+      - 'testrail_cassandra:/var/lib/cassandra'
+
 
 #DON'T DELETE -- This creates the network which connects all services
 networks:
@@ -122,7 +138,7 @@ networks:
 
 #DON'T DELETE -- This creates volumes needed by testrail
 # testrail_root contains the testrail installation and is shared between the srv and php services
-# The 'testrail_opt' and 'testrail_mysql' volumes map to a local folder, as they contain stateful information
+# The 'testrail_opt', 'testrail_mysql', 'testrail_cassandra' volumes map to a local folder, as they contain stateful information
 # With this volume-mapping to e.g. the local folder '_mysql', the database is stored locally (and not in the container). So if the container gets
 # destroyed, the database content is still available. Same applies to the 'opt' folder storing attachments & co.
 volumes:
@@ -141,4 +157,11 @@ volumes:
     driver_opts:
       type: none
       device: "$PWD/${MYSQL_PATH:-_mysql}"
+      o: bind
+
+  testrail_cassandra:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${CASSANDRA_PATH:-_cassandra}"
       o: bind
