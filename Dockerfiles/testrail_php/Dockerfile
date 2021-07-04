@@ -1,10 +1,10 @@
-ARG ARG_PHP_VERSION=7.2
+ARG ARG_PHP_VERSION=7.3
 
 FROM php:${ARG_PHP_VERSION}-fpm
 
-ARG ARG_PHP_VERSION=7.2
-ARG ARG_IONCUBE_VERSION=10.3.2
-ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
+ARG ARG_PHP_VERSION=7.3
+ARG ARG_IONCUBE_VERSION=10.4.5
+ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion72.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
