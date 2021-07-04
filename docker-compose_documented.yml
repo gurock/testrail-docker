@@ -33,7 +33,7 @@ services:
     volumes:
       # This configuration file is needed when you have an already configured TestRail instance with a DB set up. It needs to get copied
       # from the container to the '_config' folder first. Pls. read our documentation for the necessary steps.
-      #- './_config/config.php:/var/www/testrail/config.php:ro'
+      # - './_config/config.php:/var/www/testrail/config.php:ro'
 
       # DON'T DELETE OR MODIFY THIS
       # This are volumes which is shared across services. The location of the 'opt' volume, which contains attachments,
@@ -115,12 +115,12 @@ services:
       DB_URL: '${DB_URL:-}'
 
 
-#DON'T DELETE -- This creates the network which connects all services
+# DON'T DELETE -- This creates the network which connects all services
 networks:
   testrail:
     driver: bridge
 
-#DON'T DELETE -- This creates volumes needed by testrail
+# DON'T DELETE -- This creates volumes needed by testrail
 # testrail_root contains the testrail installation and is shared between the srv and php services
 # The 'testrail_opt' and 'testrail_mysql' volumes map to a local folder, as they contain stateful information
 # With this volume-mapping to e.g. the local folder '_mysql', the database is stored locally (and not in the container). So if the container gets

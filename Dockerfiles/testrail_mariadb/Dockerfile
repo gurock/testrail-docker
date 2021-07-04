@@ -6,6 +6,8 @@ LABEL vendor="TestRail" \
       email="cbreitwieser@ranorex.com" \
       type="TestRail mariadb image" \
       description="This is an image which runs mariadb and accepts a link to a db-dump for initialization."
+
+# hadolint ignore=DL3008
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends wget iputils-ping && \

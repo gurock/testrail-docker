@@ -19,7 +19,7 @@ echo " Please be aware that you will need 'sudo' installed to run this script."
 echo "###################################################################################"
 echo
 
-read -p "Press 'Enter' to continue (or Ctrl+C to abort)"
+read -r -p "Press 'Enter' to continue (or Ctrl+C to abort)"
 echo
 
 echo "Upgrading TestRail"
@@ -57,7 +57,7 @@ echo "##########################################################################
 echo
 
 
-read -p "Press 'Enter' to continue (or Ctrl+C to abort)"
+read -r -p "Press 'Enter' to continue (or Ctrl+C to abort)"
 echo
 
 

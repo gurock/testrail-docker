@@ -2,20 +2,20 @@
 #set -e
 
 function createOptDirectory {
-    if [ ! -d $1 ]
+    if [ ! -d "$1" ]
     then
-        echo "Creating " $1
-        mkdir -p $1
+        echo "Creating $1"
+        mkdir -p "$1"
     fi
 
-    chown -R www-data:www-data $1
+    chown -R www-data:www-data "$1"
 }
 
 
-createOptDirectory $TR_DEFAULT_LOG_DIR
-createOptDirectory $TR_DEFAULT_AUDIT_DIR
-createOptDirectory $TR_DEFAULT_REPORT_DIR
-createOptDirectory $TR_DEFAULT_ATTACHMENT_DIR
+createOptDirectory "$TR_DEFAULT_LOG_DIR"
+createOptDirectory "$TR_DEFAULT_AUDIT_DIR"
+createOptDirectory "$TR_DEFAULT_REPORT_DIR"
+createOptDirectory "$TR_DEFAULT_ATTACHMENT_DIR"
 
 
 chown -R www-data:www-data /var/www/testrail/config
@@ -31,7 +31,7 @@ done
 echo "Starting background task"
 while /bin/true; do
     php /var/www/testrail/task.php || true
-    sleep $TR_DEFAULT_TASK_EXECUTION
+    sleep "$TR_DEFAULT_TASK_EXECUTION"
 done &
 echo "##############"
 

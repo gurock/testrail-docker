@@ -1,10 +1,10 @@
-ARG ARG_PHP_VERSION=7.2
+ARG ARG_PHP_VERSION=7.3
 
 FROM php:${ARG_PHP_VERSION}-fpm
 
-ARG ARG_PHP_VERSION=7.2
-ARG ARG_IONCUBE_VERSION=10.3.2
-ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
+ARG ARG_PHP_VERSION=7.3
+ARG ARG_IONCUBE_VERSION=10.4.5
+ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion72.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
@@ -20,27 +20,33 @@ LABEL vendor="TestRail" \
       type="TestRail php-fpm image including ionCube loader." \
       description="This is an image which runs php-fpm with ionCube for testrail."
 
+# hadolint ignore=DL3008
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
-    apt-get install -y --no-install-recommends zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 && \
+    apt-get install -y --no-install-recommends libonig-dev libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# hadolint ignore=DL3059
+# hadolint ignore=DL4006
 RUN \
     docker-php-ext-install mbstring && \
-    if [ "x$ARG_PHP_VERSION" = "5."* ] ; then docker-php-ext-install mysql; \
+    if echo "x$ARG_PHP_VERSION" | grep '^x5.*$'; then docker-php-ext-install mysql; \
     else docker-php-ext-install mysqli; \
     fi && \
     docker-php-ext-install curl && \
     docker-php-ext-install zip && \
-    docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
-    docker-php-ext-install ldap
+    docker-php-ext-configure ldap --with-libdir="lib/$(uname -m)-linux-gnu" && \
+    docker-php-ext-install ldap && \
+    docker-php-ext-install pdo && \
+    docker-php-ext-install pdo_mysql
 
+# hadolint ignore=DL3059
 RUN \
   mkdir -p /var/www/testrail && \
   mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
-  wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
+  wget -nv --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
   unzip /tmp/testrail.zip -d /var/www/ && \
   rm /tmp/testrail.zip && \
   chown -R www-data:www-data /var/www/testrail && \
@@ -49,7 +55,7 @@ RUN \
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN \
-  wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
+  wget -nv -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
   tar -xzf /tmp/ioncube.tar.gz -C /tmp && \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
