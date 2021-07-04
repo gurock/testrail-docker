@@ -15,7 +15,7 @@ echo
 echo "###################################################################################"
 echo
 
-read -p "   Type 'yes' to continue or use 'Ctrl+C' to abort: " confirm
+read -r -p "   Type 'yes' to continue or use 'Ctrl+C' to abort: " confirm
 
 if [ "$confirm" = 'yes' ]; then
     sudo rm -rf _opt/* _mysql/* _config/config.php
@@ -23,5 +23,5 @@ if [ "$confirm" = 'yes' ]; then
 else
     echo
     echo "Aborting..."
-    exit -1
+    exit 1
 fi

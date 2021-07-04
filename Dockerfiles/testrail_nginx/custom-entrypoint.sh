@@ -4,7 +4,7 @@ set -e
 rm -f /etc/nginx/conf.d/ssl_testrail.conf
 cp -f /nginx-conf/default.conf /etc/nginx/conf.d/default.conf
 
-if [ ! -z "$SSL" ]
+if [ -n "$SSL" ]
 then
     echo
     echo "####################################################"
