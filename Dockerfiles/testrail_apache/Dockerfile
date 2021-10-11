@@ -33,7 +33,7 @@ RUN \
     fi && \
     docker-php-ext-install curl && \
     docker-php-ext-install zip && \
-    docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
+    docker-php-ext-configure ldap --with-libdir=lib/$(uname -m)-linux-gnu && \
     docker-php-ext-install ldap && \
     docker-php-ext-install pdo && \
     docker-php-ext-install pdo_mysql
@@ -50,7 +50,7 @@ RUN \
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN \
-  wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
+  wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_$(uname -m)_${ARG_IONCUBE_VERSION}.tar.gz && \
   tar -xzf /tmp/ioncube.tar.gz -C /tmp && \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
