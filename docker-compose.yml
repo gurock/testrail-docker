@@ -1,4 +1,3 @@
-
 # An explanation for docker or docker-compose newcomers can be found in the 'docker-compose_documents.yml' file
 # Please also use the official docker documentation as a reference:
 # https://docs.docker.com/    and    https://docs.docker.com/compose/
@@ -29,7 +28,7 @@ services:
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
     environment:
-      MYSQL_USER:     "${DB_USER:-testrail}"
+      MYSQL_USER: "${DB_USER:-testrail}"
       MYSQL_PASSWORD: "${DB_PWD:-testrail}"
       MYSQL_DATABASE: "${DB_NAME:-testrail}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"

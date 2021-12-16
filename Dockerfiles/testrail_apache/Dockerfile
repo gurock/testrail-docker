@@ -19,6 +19,7 @@ LABEL vendor="TestRail" \
       type="TestRail php-fpm apache image including ionCube loader." \
       description="This is an image which runs apache php-fpm with ionCube for testrail."
 
+# hadolint ignore=DL3008
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
@@ -27,9 +28,10 @@ RUN \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# hadolint ignore=DL4006
 RUN \
     docker-php-ext-install mbstring && \
-    if [ "x$ARG_PHP_VERSION" = "5."* ] ; then docker-php-ext-install mysql; \
+    if echo "x$ARG_PHP_VERSION" | grep '^x5.*$'; then docker-php-ext-install mysql; \
     else docker-php-ext-install mysqli; \
     fi && \
     docker-php-ext-install curl && \
@@ -39,8 +41,9 @@ RUN \
     docker-php-ext-install pdo && \
     docker-php-ext-install pdo_mysql
 
+# hadolint ignore=DL3059
 RUN \
-  wget --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
+  wget -nv --no-check-certificate -O /tmp/testrail.zip ${ARG_URL} && \
   mkdir -p /var/www/testrail && \
   mkdir -p /opt/testrail/attachments /opt/testrail/reports /opt/testrail/logs /opt/testrail/audit && \
   unzip /tmp/testrail.zip -d /var/www/ && \
@@ -51,12 +54,13 @@ RUN \
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN \
-  wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
+  wget -nv -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
   tar -xzf /tmp/ioncube.tar.gz -C /tmp && \
   mv /tmp/ioncube /opt/ioncube && \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
 
+# hadolint ignore=DL3059
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf
 
