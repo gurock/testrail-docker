@@ -54,6 +54,42 @@ RUN \
   echo zend_extension=/opt/ioncube/ioncube_loader_lin_${ARG_PHP_VERSION}.so >> /usr/local/etc/php/php.ini && \
   rm -f /tmp/ioncube.tar.gz
 
+RUN apt-get update
+RUN apt-get -y install build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev
+RUN apt-get -y install gcc make autoconf libc-dev pkg-config
+RUN apt-get -y install libmcrypt-dev
+RUN pecl install --nodeps mcrypt-snapshot
+
+RUN ( cd /tmp && \
+      curl https://dist.libuv.org/dist/v1.35.0/libuv-v1.35.0.tar.gz -o libuv.tgz  && tar xzf libuv.tgz && \
+      cd libuv-v1.35.0 && \
+      sh autogen.sh && \
+      ./configure && \
+      make install \
+    )
+RUN rm -rf /tmp/libuv-v1.35.0 /tmp/libuv.tgz
+
+RUN ( cd /tmp &&  \
+      git clone https://github.com/datastax/cpp-driver && \
+      cd cpp-driver && \
+      mkdir build &&  \
+      cd build && \
+      cmake -DCMAKE_INSTALL_PREFIX=/usr .. && \
+      make && \
+      make install \
+      )
+RUN rm -rf /tmp/cpp-driver
+
+RUN ( cd /tmp && \
+      git clone https://github.com/datastax/php-driver && \
+      cd php-driver && \
+      git submodule update --init && \
+      cd ext && \
+      phpize && \
+      ./configure && \
+      make install \
+    )
+RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf
 

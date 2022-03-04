@@ -29,6 +29,7 @@ define('CASSANDRA_PORT', 9042);
 define('CASSANDRA_KEYSPACE', 'tr_keyspace');
 define('CASSANDRA_USERNAME', 'cassandra');
 define('CASSANDRA_PASSWORD', 'cassandra');
+define('CASSANDRA_SCHEMA_VERSION', 2);
 
 /*
 |--------------------------------------------------------------------

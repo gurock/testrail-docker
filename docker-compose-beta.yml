@@ -1,0 +1,79 @@
+
+# An explanation for docker or docker-compose newcomers can be found in the 'docker-compose_documents.yml' file
+# Please also use the official docker documentation as a reference:
+# https://docs.docker.com/    and    https://docs.docker.com/compose/
+
+# Instructions for necessary settings during setup when using docker-compose deployment can be found here:
+# TBD
+
+version: '3'
+services:
+  srv:
+    image: "testrail/apache:beta"
+    restart: unless-stopped
+    networks:
+      - testrail
+    ports:
+      - "${HTTP_PORT:-8000}:80"
+    volumes:
+      - 'testrail_config:/var/www/testrail/config/'
+      - 'testrail_opt:/opt/testrail'
+
+  db:
+    image: testrail/mysql:latest
+    restart: unless-stopped
+    depends_on:
+      - srv
+    networks:
+      - testrail
+    volumes:
+      - 'testrail_mysql:/var/lib/mysql'
+    environment:
+      MYSQL_USER:     "${DB_USER:-testrail}"
+      MYSQL_PASSWORD: "${DB_PWD:-testrail}"
+      MYSQL_DATABASE: "${DB_NAME:-testrail}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
+
+  cassandra:
+    image: testrail/cassandra:latest
+    restart: unless-stopped
+    networks:
+      - testrail
+    ports:
+      - "${CASSANDRA_PORT:-9042}:9042"
+    volumes:
+      - 'testrail_cassandra:/var/lib/cassandra'
+
+networks:
+  testrail:
+    driver: bridge
+
+volumes:
+  testrail_opt:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${OPT_PATH:-_opt}"
+      o: bind
+
+  testrail_mysql:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${MYSQL_PATH:-_mysql}"
+      o: bind
+
+  testrail_cassandra:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${CASSANDRA_PATH:-_cassandra}"
+      o: bind
+
+  testrail_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${CONFIG_PATH:-_config}"
+      o: bind

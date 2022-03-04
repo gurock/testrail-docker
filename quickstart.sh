@@ -5,7 +5,7 @@ echo "##########################################################################
 echo " TestRail quickstart"
 echo
 echo " This script will help you to quickly start a TestRail instance and will"
-echo " populate a '.env' file with the neccessary configuration values."
+echo " populate a '.env' file with the necessary configuration values."
 echo " For more advanced configuration please directly modify the .env file and utilize"
 echo " docker-compose directly."
 
@@ -42,9 +42,8 @@ then
     echo
     read -n1 -r -p "   Press 'c' to continue or any other key to abort..." key
 
-    if [ "$key" = 'c' ]; then
-        continue
-    else
+    if [ "$key" != 'c' ]; then
+        # shellcheck disable=SC2242
         exit -1
     fi
 fi
@@ -82,10 +81,12 @@ echo
 read -r -p "Press 'l' to use 'latest', 'b' for 'beta' or type in the version you want to use: " version
 echo
 
+dockerComposeFile="docker-compose.yml";
 if [ "$version" = 'l' ]; then
     testrailVersion="latest"
 elif [ "$version" = 'b' ]; then
     testrailVersion="beta"
+    dockerComposeFile="docker-compose-beta.yml"
 else
     testrailVersion=$version
 fi
@@ -173,7 +174,7 @@ echo
 echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
 
-docker-compose up -d
+docker-compose -f "${dockerComposeFile}" up -d
 sleep 5
 
 echo
@@ -227,20 +228,3 @@ echo
 echo
 echo "To shut down TestRail again run the following command in this folder:"
 echo "docker-compose down -v"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
