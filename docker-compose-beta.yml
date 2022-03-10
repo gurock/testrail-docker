@@ -8,32 +8,19 @@
 
 version: '3'
 services:
-  php:
-    image: "testrail_php:${TESTRAIL_VERSION:-latest}"
-    restart: unless-stopped
-    networks:
-      - testrail
-    volumes:
-      - 'testrail_config:/var/www/testrail/config/'
-      - 'testrail_root:/var/www/testrail'
-      - 'testrail_opt:/opt/testrail'
-
   srv:
-    image: testrail/nginx:latest
+    image: "testrail/apache:beta"
     restart: unless-stopped
-    depends_on:
-      - php
     networks:
       - testrail
     ports:
       - "${HTTP_PORT:-8000}:80"
     volumes:
-      - 'testrail_root:/var/www/testrail'
+      - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_opt:/opt/testrail'
 
-
   db:
-    image: testrail/mariadb:latest
+    image: testrail/mysql:latest
     restart: unless-stopped
     depends_on:
       - srv
@@ -42,7 +29,7 @@ services:
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
     environment:
-      MYSQL_USER: "${DB_USER:-testrail}"
+      MYSQL_USER:     "${DB_USER:-testrail}"
       MYSQL_PASSWORD: "${DB_PWD:-testrail}"
       MYSQL_DATABASE: "${DB_NAME:-testrail}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"
@@ -50,8 +37,11 @@ services:
 
   cassandra:
     image: testrail/cassandra:latest
+    restart: unless-stopped
     networks:
       - testrail
+    ports:
+      - "${CASSANDRA_PORT:-9042}:9042"
     volumes:
       - 'testrail_cassandra:/var/lib/cassandra'
 
@@ -60,9 +50,6 @@ networks:
     driver: bridge
 
 volumes:
-  testrail_root:
-    driver: local
-
   testrail_opt:
     driver: local
     driver_opts:

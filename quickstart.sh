@@ -5,7 +5,7 @@ echo "##########################################################################
 echo " TestRail quickstart"
 echo
 echo " This script will help you to quickly start a TestRail instance and will"
-echo " populate a '.env' file with the neccessary configuration values."
+echo " populate a '.env' file with the necessary configuration values."
 echo " For more advanced configuration please directly modify the .env file and utilize"
 echo " docker-compose directly."
 
@@ -22,6 +22,7 @@ echo
 optFolder=_opt
 backupDir=backup
 dbFolder=_mysql
+cassandraFolder=_cassandra
 envFile=.env
 configFile=_config/config.php
 httpPort=8000
@@ -41,9 +42,8 @@ then
     echo
     read -n1 -r -p "   Press 'c' to continue or any other key to abort..." key
 
-    if [ "$key" = 'c' ]; then
-        continue
-    else
+    if [ "$key" != 'c' ]; then
+        # shellcheck disable=SC2242
         exit -1
     fi
 fi
@@ -81,10 +81,12 @@ echo
 read -r -p "Press 'l' to use 'latest', 'b' for 'beta' or type in the version you want to use: " version
 echo
 
+dockerComposeFile="docker-compose.yml";
 if [ "$version" = 'l' ]; then
     testrailVersion="latest"
 elif [ "$version" = 'b' ]; then
     testrailVersion="beta"
+    dockerComposeFile="docker-compose-beta.yml"
 else
     testrailVersion=$version
 fi
@@ -113,6 +115,20 @@ if [ "$(ls -A $dbFolder)" ]; then
 
     sudo mv $dbFolder $backupDir/"${dbFolder}_${timeStamp}"
     mkdir -p $dbFolder
+fi
+
+#####################################
+# Cassandra
+
+echo
+echo
+echo "The Cassandra database will be stored in the local '_cassandra' folder"
+
+if [ "$(ls -A $cassandraFolder)" ]; then
+    echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
+
+    sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
+    mkdir -p $cassandraFolder
 fi
 
 #####################################
@@ -158,7 +174,7 @@ echo
 echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
 
-docker-compose up -d
+docker-compose -f "${dockerComposeFile}" up -d
 sleep 5
 
 echo
@@ -196,6 +212,14 @@ echo "    User:       'testrail'"
 echo "    Password:    <The user password you've entered for the db-user>"
 
 echo
+echo " CASSANDRA SETTINGS"
+echo "    Server:     'cassandra'"
+echo "    Port:       9042"
+echo "    Keyspace:   'tr_keyspace'"
+echo "    User:       'cassandra'"
+echo "    Password:   'cassandra'"
+
+echo
 echo "  Application Settings"
 echo "    - Simply leave the default values for the folders 'logs, reports, attachments and audit'."
 echo
@@ -204,20 +228,3 @@ echo
 echo
 echo "To shut down TestRail again run the following command in this folder:"
 echo "docker-compose down -v"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
