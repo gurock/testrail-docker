@@ -22,7 +22,7 @@ LABEL vendor="TestRail" \
 RUN \
     apt-get update && \
     apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
-    apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 && \
+    apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev && \
     apt-get install -y --only-upgrade apache2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -37,7 +37,7 @@ RUN \
     docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
     docker-php-ext-install ldap && \
     docker-php-ext-install pdo && \
-    docker-php-ext-configure gd --with-jpeg && docker-php-ext-install gd && \
+    docker-php-ext-install gd && \
     docker-php-ext-install pdo_mysql
 
 RUN \
