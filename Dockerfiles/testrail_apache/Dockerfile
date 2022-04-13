@@ -1,7 +1,6 @@
-ARG ARG_PHP_VERSION=7.2
+ARG ARG_PHP_VERSION=7.3
 FROM php:${ARG_PHP_VERSION}-apache
 
-ARG ARG_PHP_VERSION=7.3
 ARG ARG_IONCUBE_VERSION=10.3.2
 ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
 
@@ -30,7 +29,7 @@ RUN \
 RUN \
     docker-php-ext-install mbstring && \
     if [ "x$ARG_PHP_VERSION" = "5."* ] ; then docker-php-ext-install mysql; \
-    else docker-php-ext-install mysqli; \
+    else docker-php-ext-install mysqli pdo pdo_mysql; \
     fi && \
     docker-php-ext-install curl && \
     docker-php-ext-install zip && \
