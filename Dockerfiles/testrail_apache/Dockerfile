@@ -13,7 +13,7 @@ ENV TR_DEFAULT_REPORT_DIR="/opt/testrail/reports/"
 ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
 ENV OPENSSL_CONF="/etc/ssl/"
 ENV LDAP_CONF_DIR="/etc/ldap/"
-ENV LDAP_CONF_FILE="ldap.conf"
+ENV LDAP_CONF_FILE="$LDAP_CONF_DIR/ldap.conf"
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -103,22 +103,22 @@ RUN mkdir -p /etc/apache2/ssl
 VOLUME /etc/apache2/ssl
 
 RUN mkdir -p $LDAP_CONF_DIR
-RUN echo '#6' > $LDAP_CONF_FILE \
-         '# LDAP Defaults'  >> $LDAP_CONF_FILE \
-         '#' >> $LDAP_CONF_FILE \
-         ''  >> $LDAP_CONF_FILE \
-         '# See ldap.conf(5) for details' >> $LDAP_CONF_FILE \
-         '# This file should be world readable but not world writable.' >> $LDAP_CONF_FILE \
-         ' ' >> $LDAP_CONF_FILE \
-         '#BASE   dc=example,dc=com' >> $LDAP_CONF_FILE \
-         '#URI    ldap://ldap.example.com ldap://ldap-master.example.com:666' >> $LDAP_CONF_FILE \
-         ' ' >> $LDAP_CONF_FILE \
-         '#SIZELIMIT      12' >> $LDAP_CONF_FILE \
-         '#TIMELIMIT      15' >> $LDAP_CONF_FILE \
-         '#DEREF          never' >> $LDAP_CONF_FILE \
-         ' ' >> $LDAP_CONF_FILE \
-         '# TLS certificates (needed for GnuTLS)' >> $LDAP_CONF_FILE \
-         'TLS_CACERT      /etc/ssl/certs/ca-certificates.crt' >> $LDAP_CONF_FILE
+RUN echo '#' > $LDAP_CONF_FILE
+RUN echo '# LDAP Defaults'  >> $LDAP_CONF_FILE
+RUN echo '#' >> $LDAP_CONF_FILE
+RUN echo ''  >> $LDAP_CONF_FILE
+RUN echo '# See ldap.conf(5) for details' >> $LDAP_CONF_FILE
+RUN echo '# This file should be world readable but not world writable.' >> $LDAP_CONF_FILE
+RUN echo ' ' >> $LDAP_CONF_FILE
+RUN echo '#BASE   dc=example,dc=com' >> $LDAP_CONF_FILE
+RUN echo  '#URI    ldap://ldap.example.com ldap://ldap-master.example.com:666' >> $LDAP_CONF_FILE
+RUN echo ' ' >> $LDAP_CONF_FILE
+RUN echo '#SIZELIMIT      12' >> $LDAP_CONF_FILE
+RUN echo '#TIMELIMIT      15' >> $LDAP_CONF_FILE
+RUN echo '#DEREF          never' >> $LDAP_CONF_FILE
+RUN echo ' ' >> $LDAP_CONF_FILE
+RUN echo '# TLS certificates (needed for GnuTLS)' >> $LDAP_CONF_FILE
+RUN echo 'TLS_CACERT      /etc/ssl/certs/ca-certificates.crt' >> $LDAP_CONF_FILE
 
 COPY apache_testrail.conf /apache-conf/000-default.conf
 COPY ssl_apache_testrail.conf /apache-conf/ssl_apache_testrail.conf
