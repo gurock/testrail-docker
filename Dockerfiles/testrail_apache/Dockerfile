@@ -102,7 +102,7 @@ VOLUME /apache-conf
 RUN mkdir -p /etc/apache2/ssl
 VOLUME /etc/apache2/ssl
 
-RUN mkdir -p /etc/ldap/
+RUN mkdir -p $LDAP_CONF_DIR
 RUN echo '#6' > $LDAP_CONF_FILE \
          '# LDAP Defaults'  >> $LDAP_CONF_FILE \
          '#' >> $LDAP_CONF_FILE \
