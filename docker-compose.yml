@@ -37,10 +37,15 @@ services:
 
   cassandra:
     image: testrail/cassandra:latest
+    restart: unless-stopped
     networks:
       - testrail
+    ports:
+      - "${CASSANDRA_PORT:-9042}:9042"
     volumes:
       - 'testrail_cassandra:/var/lib/cassandra'
+    environment:
+      CASSANDRA_KEYSPACE: "${TR_KEYSPACE:-testrail}"
 
 networks:
   testrail:
