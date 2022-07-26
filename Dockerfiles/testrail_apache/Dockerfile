@@ -1,7 +1,6 @@
-ARG ARG_PHP_VERSION=7.2
-FROM php:${ARG_PHP_VERSION}-apache
-
 ARG ARG_PHP_VERSION=7.3
+FROM php:${ARG_PHP_VERSION}-apache-bullseye
+
 ARG ARG_IONCUBE_VERSION=10.3.2
 ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
 
@@ -22,7 +21,9 @@ LABEL vendor="TestRail" \
       description="This is an image which runs apache php-fpm with ionCube for testrail."
 
 RUN \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get update && \
+    apt-get upgrade -yqq && \
     apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
     apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev && \
     apt-get install -y --only-upgrade apache2 && \
