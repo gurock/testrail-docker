@@ -1,6 +1,7 @@
 ARG ARG_PHP_VERSION=7.3
 FROM php:${ARG_PHP_VERSION}-apache-bullseye
 
+ARG ARG_PHP_VERSION=7.3
 ARG ARG_IONCUBE_VERSION=10.3.2
 ARG ARG_URL=https://secure.gurock.com/downloads/testrail/testrail-latest-ion71.zip
 
