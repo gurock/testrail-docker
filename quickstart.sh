@@ -19,6 +19,7 @@ read -p "Press 'Enter' to continue (or Ctrl+C to abort)"
 echo
 
 #variables definition
+testrailDockerHubRepository="testrail/apache"
 optFolder=_opt
 backupDir=backup
 dbFolder=_mysql
@@ -76,8 +77,13 @@ echo ""
 
 echo "These TestRail versions are available"
 echo
-wget -q https://registry.hub.docker.com/v1/repositories/testrail/apache/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'
-echo
+tokenUri="https://auth.docker.io/token"
+data=("service=registry.docker.io" "scope=repository:$testrailDockerHubRepository:pull")
+token="$(curl --silent --get --data-urlencode ${data[0]} --data-urlencode ${data[1]} $tokenUri | jq --raw-output '.token')"
+listUri="https://registry-1.docker.io/v2/$testrailDockerHubRepository/tags/list"
+authz="Authorization: Bearer $token"
+result="$(curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $token" $listUri | jq --raw-output '.')"
+echo $result | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}' | sed 's/,/\n/g'
 read -r -p "Press 'l' to use 'latest', 'b' for 'beta' or type in the version you want to use: " version
 echo
 
