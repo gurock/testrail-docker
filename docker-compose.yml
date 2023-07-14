@@ -9,7 +9,7 @@
 version: '3'
 services:
   srv:
-    image: "testrail/apache:${TESTRAIL_VERSION:-latest}"
+    image: "testrail/apache:${TESTRAIL_VERSION:-default}"
     restart: unless-stopped
     networks:
       - testrail

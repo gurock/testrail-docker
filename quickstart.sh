@@ -84,15 +84,12 @@ listUri="https://registry-1.docker.io/v2/$testrailDockerHubRepository/tags/list"
 authz="Authorization: Bearer $token"
 result="$(curl --silent --get -H "Accept: application/json" -H "Authorization: Bearer $token" $listUri | jq --raw-output '.')"
 echo $result | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}' | sed 's/,/\n/g'
-read -r -p "Press 'l' to use 'latest', 'b' for 'beta' or type in the version you want to use: " version
+read -r -p "Press 'd' to use 'default' or type in the version you want to use: " version
 echo
 
 dockerComposeFile="docker-compose.yml";
-if [ "$version" = 'l' ]; then
-    testrailVersion="latest"
-elif [ "$version" = 'b' ]; then
-    testrailVersion="beta"
-    dockerComposeFile="docker-compose-beta.yml"
+if [ "$version" = 'd' ]; then
+    testrailVersion="default"
 else
     testrailVersion=$version
 fi
