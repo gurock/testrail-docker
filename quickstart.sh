@@ -7,7 +7,7 @@ echo
 echo " This script will help you to quickly start a TestRail instance and will"
 echo " populate a '.env' file with the necessary configuration values."
 echo " For more advanced configuration please directly modify the .env file and utilize"
-echo " docker-compose directly."
+echo " docker-compose/docker compose directly."
 
 echo
 echo " Please be aware that you will need 'sudo' installed to run this script."
@@ -39,7 +39,7 @@ mkdir -p  $backupDir
 if [ -n "${dockerPSOutput}" ];
 then
     echo " ### Seems like a TestRail instance is already running"
-    echo "   To shut it down run 'docker-compose down -v' in this folder and then call this script again."
+    echo "   To shut it down run 'docker-compose/docker compose down -v' in this folder and then call this script again."
     echo
     read -n1 -r -p "   Press 'c' to continue or any other key to abort..." key
 
@@ -176,8 +176,16 @@ fi
 echo
 echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+else
+    echo "Neither 'docker-compose' nor 'docker compose' is available."
+    exit 1
+fi
 
-docker-compose -f "${dockerComposeFile}" up -d
+$DOCKER_COMPOSE -f "${dockerComposeFile}" up -d
 sleep 5
 
 echo
@@ -230,4 +238,4 @@ echo "  The TestRail background task is also automatically started 60s after the
 echo
 echo
 echo "To shut down TestRail again run the following command in this folder:"
-echo "docker-compose down -v"
+echo "docker-compose/docker compose down -v"
