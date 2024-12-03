@@ -98,6 +98,19 @@ RUN ( cd /tmp && \
       ./configure && \
       make install \
     )
+
+RUN ( cd /tmp && \
+      apt-get update && \
+      apt install -y libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxrandr2 libgbm-dev libasound2 libatk1.0-0 libatk-bridge2.0-0 libx11-dev libnss3 libnspr4 libxss1 libxext6 libxshmfence-dev libxkbcommon-dev && \
+      wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chrome-headless-shell-linux64.zip && \
+      unzip "chrome-headless-shell-linux64.zip" && \
+      mv chrome-headless-shell-linux64 /usr/bin && \
+      chown root:www-data /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chown root:www-data /usr/bin/chrome-headless-shell-linux64 && \
+      chmod 775 /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chmod 775 /usr/bin/chrome-headless-shell-linux64 \
+    )
+
 RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf
