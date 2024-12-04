@@ -231,6 +231,10 @@ echo "    User:       'cassandra'"
 echo "    Password:   'cassandra'"
 
 echo
+echo " CHROMIUM PATH (For Testrail versions that supports Chromium-based PDF Generation)"
+echo "    Chromium Headless Shell Path:     '/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell'"
+
+echo
 echo "  Application Settings"
 echo "    - Simply leave the default values for the folders 'logs, reports, attachments and audit'."
 echo

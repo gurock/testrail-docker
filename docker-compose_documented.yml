@@ -93,6 +93,9 @@ services:
     # See volumes mapping below
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
+    
+    # For Testrail versions supporting Chromium-based PDF generation, you can mount the folder containing the chromium binary as follows
+    # - ./chrome-headless-shell-linux64:/usr/bin/chrome-headless-shell-linux64
 
     # With these environment variables, the database is initialized upon its first start.
     # A database and a user with password are automatically created. The user is assigned full access rights to the created database.
