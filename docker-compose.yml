@@ -6,7 +6,7 @@
 # Instructions for necessary settings during setup when using docker-compose deployment can be found here:
 # TBD
 
-version: '3'
+#version: '3'
 services:
   srv:
     image: "testrail/apache:${TESTRAIL_VERSION:-default}"
