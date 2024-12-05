@@ -39,7 +39,7 @@ mkdir -p  $backupDir
 if [ -n "${dockerPSOutput}" ];
 then
     echo " ### Seems like a TestRail instance is already running"
-    echo "   To shut it down run 'docker-compose -v' in this folder and then call this script again."
+    echo "   To shut it down run 'docker-compose down -v' in this folder and then call this script again."
     echo
     read -n1 -r -p "   Press 'c' to continue or any other key to abort..." key
 
