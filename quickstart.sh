@@ -176,6 +176,7 @@ fi
 echo
 echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
+
 docker-compose -f "${dockerComposeFile}" up -d
 sleep 5
 
