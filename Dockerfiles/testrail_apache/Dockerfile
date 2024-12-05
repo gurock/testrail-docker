@@ -101,12 +101,12 @@ RUN ( cd /tmp && \
 
 RUN ( cd /tmp && \
       apt-get update && \
-      apt install -y libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxrandr2 libgbm-dev libasound2 libatk1.0-0 libatk-bridge2.0-0 libx11-dev libnss3 libnspr4 libxss1 libxext6 libxshmfence-dev libxkbcommon-dev && \
+      apt install -y libnss3 libatk1.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libasound2 libatk-bridge2.0-0 libxfixes3 && \
       wget https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.69/linux64/chrome-headless-shell-linux64.zip && \
       unzip "chrome-headless-shell-linux64.zip" && \
       mv chrome-headless-shell-linux64 /usr/bin && \
-      chown root:www-data /usr/bin/chrome-headless-shell-linux64/* -R && \
-      chown root:www-data /usr/bin/chrome-headless-shell-linux64 && \
+      chown www-data:www-data /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chown www-data:www-data /usr/bin/chrome-headless-shell-linux64 && \
       chmod 775 /usr/bin/chrome-headless-shell-linux64/* -R && \
       chmod 775 /usr/bin/chrome-headless-shell-linux64 \
     )
