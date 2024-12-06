@@ -14,6 +14,7 @@ ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
 ENV OPENSSL_CONF="/etc/ssl/"
 ENV LDAP_CONF_DIR="/etc/ldap/"
 ENV LDAP_CONF_FILE="$LDAP_CONF_DIR/ldap.conf"
+ENV TR_CHROMIUM_PATH="/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell"
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
