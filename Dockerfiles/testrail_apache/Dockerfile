@@ -89,15 +89,6 @@ RUN ( cd /tmp &&  \
       )
 RUN rm -rf /tmp/cpp-driver
 
-RUN ( cd /tmp && \
-      git clone https://github.com/qkdreyer/cassandra-php-driver.git && \
-      cd cassandra-php-driver && \
-      git submodule update --init && \
-      cd ext && \
-      phpize && \
-      ./configure && \
-      make install \
-    )
 RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf

@@ -102,7 +102,6 @@ All compose files rely on additional volumes
   * `testrail_root` contains the installation and gets mounted to `/var/www/testrail`
   * `testrail_opt` contains uploaded files etc. and gets mounted  to `/opt/testrail`
   * `testrail_db` contains the database and gets mounted to `/var/lib/mysql`.
-  * `testrail_cassandra` contains the Cassandra database and gets mounted to `/var/lib/cassandra`.
   * `testrail_config` contains the `config.php` file, which configures TestRail and is mounted to `/var/www/testrail/config`
 
 Containers are connected though a `testrail` bridged network.

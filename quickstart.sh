@@ -23,7 +23,6 @@ testrailDockerHubRepository="testrail/apache"
 optFolder=_opt
 backupDir=backup
 dbFolder=_mysql
-cassandraFolder=_cassandra
 envFile=.env
 configFile=_config/config.php
 httpPort=8000
@@ -121,20 +120,6 @@ if [ "$(ls -A $dbFolder)" ]; then
 fi
 
 #####################################
-# Cassandra
-
-echo
-echo
-echo "The Cassandra database will be stored in the local '_cassandra' folder"
-
-if [ "$(ls -A $cassandraFolder)" ]; then
-    echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
-
-    sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
-    mkdir -p $cassandraFolder
-fi
-
-#####################################
 # opt
 if [ "$(ls -A $optFolder)" ]; then
     echo "  ... The opt-folder already contains files -- moving it to '${backupDir}'"
@@ -213,14 +198,6 @@ echo "    Server:     'db:3306'"
 echo "    Database:   'testrail'"
 echo "    User:       'testrail'"
 echo "    Password:    <The user password you've entered for the db-user>"
-
-echo
-echo " CASSANDRA SETTINGS"
-echo "    Server:     'cassandra'"
-echo "    Port:       9042"
-echo "    Keyspace:   'tr_keyspace'"
-echo "    User:       'cassandra'"
-echo "    Password:   'cassandra'"
 
 echo
 echo "  Application Settings"

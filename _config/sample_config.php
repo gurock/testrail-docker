@@ -18,21 +18,6 @@ define('DB_PASSWORD', 'testrail');
 
 /*
 |--------------------------------------------------------------------
-| CASSANDRA CONFIGURATION
-|--------------------------------------------------------------------
-|
-| Please specify the Cassandra connection settings below.
-*/
-
-define('CASSANDRA_HOSTNAME', 'cassandra');
-define('CASSANDRA_PORT', 9042);
-define('CASSANDRA_KEYSPACE', 'tr_keyspace');
-define('CASSANDRA_USERNAME', 'cassandra');
-define('CASSANDRA_PASSWORD', 'cassandra');
-define('CASSANDRA_SCHEMA_VERSION', 2);
-
-/*
-|--------------------------------------------------------------------
 | DIAGNOSTICS
 |--------------------------------------------------------------------
 |
