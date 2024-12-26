@@ -27,6 +27,8 @@ cassandraFolder=_cassandra
 envFile=.env
 configFile=_config/config.php
 httpPort=8000
+cassandraDeprecationVersion="9.0.0"
+cassandraIsDeprecated="false"
 
 #####################################
 # check if TestRail is already running
@@ -123,15 +125,21 @@ fi
 #####################################
 # Cassandra
 
-echo
-echo
-echo "The Cassandra database will be stored in the local '_cassandra' folder"
+# Compare versions
+if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$testrailVersion" ] && [ "$testrailVersion" != "$cassandraDeprecationVersion" ]; then
+    echo
+    echo
+    echo "The Cassandra database will be stored in the local '_cassandra' folder"
 
-if [ "$(ls -A $cassandraFolder)" ]; then
-    echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
+    if [ "$(ls -A $cassandraFolder)" ]; then
+        echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
 
-    sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
-    mkdir -p $cassandraFolder
+        sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
+        mkdir -p $cassandraFolder
+    fi
+else
+    echo "  ... The Cassandra is no longer supported"
+    cassandraIsDeprecated="true"
 fi
 
 #####################################
@@ -176,8 +184,11 @@ fi
 echo
 echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
-
-docker-compose -f "${dockerComposeFile}" up -d
+if [ "$cassandraIsDeprecated" == "true" ]; then
+    docker-compose -f "${dockerComposeFile}" up -d
+else
+    docker-compose -f "${dockerComposeFile}" -f docker-compose-override-cassandra.yml up -d
+fi
 sleep 5
 
 echo
@@ -214,13 +225,15 @@ echo "    Database:   'testrail'"
 echo "    User:       'testrail'"
 echo "    Password:    <The user password you've entered for the db-user>"
 
-echo
-echo " CASSANDRA SETTINGS"
-echo "    Server:     'cassandra'"
-echo "    Port:       9042"
-echo "    Keyspace:   'tr_keyspace'"
-echo "    User:       'cassandra'"
-echo "    Password:   'cassandra'"
+if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$testrailVersion" ] && [ "$testrailVersion" != "$cassandraDeprecationVersion" ]; then
+    echo
+    echo " CASSANDRA SETTINGS"
+    echo "    Server:     'cassandra'"
+    echo "    Port:       9042"
+    echo "    Keyspace:   'tr_keyspace'"
+    echo "    User:       'cassandra'"
+    echo "    Password:   'cassandra'"
+fi
 
 echo
 echo "  Application Settings"

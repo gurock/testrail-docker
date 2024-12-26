@@ -1,0 +1,20 @@
+version: '3'
+services:
+   cassandra:
+    image: testrail/cassandra:latest
+    networks:
+      - testrail
+    volumes:
+      - 'testrail_cassandra:/var/lib/cassandra'
+
+networks:
+  testrail:
+    driver: bridge
+
+volumes:
+  testrail_cassandra:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${CASSANDRA_PATH:-_cassandra}"
+      o: bind
