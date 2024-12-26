@@ -18,3 +18,4 @@ volumes:
       type: none
       device: "$PWD/${CASSANDRA_PATH:-_cassandra}"
       o: bind
+  
