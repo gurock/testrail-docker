@@ -28,7 +28,7 @@ envFile=.env
 configFile=_config/config.php
 httpPort=8000
 cassandraDeprecationVersion="9.0.0"
-cassandraIsDeprecated="false"
+cassandraIsDeprecated="true"
 
 #####################################
 # check if TestRail is already running
@@ -130,16 +130,13 @@ if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -
     echo
     echo
     echo "The Cassandra database will be stored in the local '_cassandra' folder"
-
+    cassandraIsDeprecated="false"
     if [ "$(ls -A $cassandraFolder)" ]; then
         echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
 
         sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
         mkdir -p $cassandraFolder
     fi
-else
-    echo "  ... The Cassandra is no longer supported"
-    cassandraIsDeprecated="true"
 fi
 
 #####################################
