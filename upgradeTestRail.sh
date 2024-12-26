@@ -4,6 +4,8 @@ timeStamp=$(date "+%Y.%m.%d-%H.%M.%S")
 dbFolder=_mysql
 optFolder=_opt
 confFolder=_config
+cassandraDeprecationVersion="9.0.0"
+cassandraIsDeprecated="true"
 
 backupDir=backup
 mkdir -p  $backupDir
@@ -44,13 +46,20 @@ else
     fi
 fi
 
+
+if [ "$(printf '%s\n' "$version" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$version" ] && [ "$version" != "$cassandraDeprecationVersion" ]; then
+    cassandraIsDeprecated="false"
+fi
+
 echo
 echo "###########################################################################################"
 echo " If you're upgrading from a docker applicance, simply continue. Otherwise, do these steps:"
 echo "   * Ensure that the 'config.php' file is in the '_config folder'."
 echo "   * Copy the content of /var/lib/mysql to '_mysql'"
 echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
-echo "   * Copy the content of /var/lib/cassandra to '_cassandra'"
+if [ "$cassandraIsDeprecated" == "false" ]; then
+    echo "   * Copy the content of /var/lib/cassandra to '_cassandra'"
+fi
 echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
 echo "   * Copy/Move your attachment, reports, logs, and audit folders into '_opt'."
 echo
@@ -71,7 +80,11 @@ echo "Getting new TestRail version and then restarting TestRail"
 
 docker-compose pull
 docker-compose down -v
-docker-compose up -d
+if [ "$cassandraIsDeprecated" == "true" ]; then
+    docker-compose -f docker-compose.yml up -d
+else
+    docker-compose -f docker-compose.yml -f docker-compose-override-cassandra.yml up -d
+fi
 
 echo
 echo "We're done :-)"
