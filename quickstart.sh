@@ -125,6 +125,14 @@ fi
 #####################################
 # Cassandra
 
+# Normalize versions to 3-part format (e.g., 9 -> 9.0.0, 9.0 -> 9.0.0)
+normalize_version() {
+    echo "$1" | awk -F. '{ printf("%d.%d.%d\n", $1, $2?$2:0, $3?$3:0) }'
+}
+
+testrailVersion=$(normalize_version "$testrailVersion")
+cassandraDeprecationVersion=$(normalize_version "$cassandraDeprecationVersion")
+
 # Compare versions
 if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$testrailVersion" ] && [ "$testrailVersion" != "$cassandraDeprecationVersion" ]; then
     echo
@@ -137,6 +145,8 @@ if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -
         sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
         mkdir -p $cassandraFolder
     fi
+else
+    echo "Cassandra Deprecation Applied for Provided Testrail Version '${testrailVersion}'"
 fi
 
 #####################################
