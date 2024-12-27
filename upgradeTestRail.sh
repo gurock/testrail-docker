@@ -4,6 +4,7 @@ timeStamp=$(date "+%Y.%m.%d-%H.%M.%S")
 dbFolder=_mysql
 optFolder=_opt
 confFolder=_config
+# value for the variable cassandraDeprecationVersion will need to be updated with actual deprecation version.
 cassandraDeprecationVersion="9.0.0"
 cassandraIsDeprecated="true"
 
