@@ -46,9 +46,18 @@ else
     fi
 fi
 
+# Normalize versions to 3-part format (e.g., 9 -> 9.0.0, 9.0 -> 9.0.0)
+normalize_version() {
+    echo "$1" | awk -F. '{ printf("%d.%d.%d\n", $1, $2?$2:0, $3?$3:0) }'
+}
+
+version=$(normalize_version "$version")
+cassandraDeprecationVersion=$(normalize_version "$cassandraDeprecationVersion")
 
 if [ "$(printf '%s\n' "$version" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$version" ] && [ "$version" != "$cassandraDeprecationVersion" ]; then
     cassandraIsDeprecated="false"
+else
+    echo "Cassandra Deprecation Applied for Provided Testrail Version '${version}'"
 fi
 
 echo
