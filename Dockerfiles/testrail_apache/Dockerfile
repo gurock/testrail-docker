@@ -14,6 +14,7 @@ ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
 ENV OPENSSL_CONF="/etc/ssl/"
 ENV LDAP_CONF_DIR="/etc/ldap/"
 ENV LDAP_CONF_FILE="$LDAP_CONF_DIR/ldap.conf"
+ENV TR_CHROME_PATH="/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell"
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -98,6 +99,20 @@ RUN ( cd /tmp && \
       ./configure && \
       make install \
     )
+
+RUN ( cd /tmp && \
+      apt-get update && \
+      apt install -y libnss3 libatk1.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libasound2 libatk-bridge2.0-0 libxfixes3 && \
+      LATEST_VERSION=$(wget -qO- https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE) && \
+      wget https://storage.googleapis.com/chrome-for-testing-public/${LATEST_VERSION}/linux64/chrome-headless-shell-linux64.zip && \
+      unzip "chrome-headless-shell-linux64.zip" && \
+      mv chrome-headless-shell-linux64 /usr/bin && \
+      chown www-data:www-data /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chown www-data:www-data /usr/bin/chrome-headless-shell-linux64 && \
+      chmod 775 /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chmod 775 /usr/bin/chrome-headless-shell-linux64 \
+    )
+
 RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf
