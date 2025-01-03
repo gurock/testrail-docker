@@ -223,8 +223,8 @@ echo "    User:       'cassandra'"
 echo "    Password:   'cassandra'"
 
 echo
-echo " CHROMIUM PATH (For TestRail versions that supports Chromium-based PDF Generation)"
-echo "    Chromium Headless Shell Path:     '/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell'"
+echo " CHROME PATH (For TestRail versions that supports Chrome-based PDF Generation)"
+echo "    Chrome Headless Shell Path:     '/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell'"
 
 echo
 echo "  Application Settings"
