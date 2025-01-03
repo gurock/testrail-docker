@@ -94,7 +94,7 @@ services:
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
     
-    # For TestRail versions supporting Chrome-based PDF generation, you can mount the folder containing the chromium binary as follows
+    # For TestRail versions supporting Chrome-based PDF generation, you can mount the folder containing the chrome binary as follows
     # - ./chrome-headless-shell-linux64:/usr/bin/chrome-headless-shell-linux64
 
     # With these environment variables, the database is initialized upon its first start.
