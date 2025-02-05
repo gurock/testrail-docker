@@ -98,6 +98,14 @@ RUN ( cd /tmp && \
       ./configure && \
       make install \
     )
+
+RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev linux-libc-dev
+RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
+RUN apt-get -y remove libmcrypt-dev
+RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev 
+RUN apt autoremove -yq && apt autoclean -qy
+
+
 RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf
