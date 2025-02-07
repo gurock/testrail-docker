@@ -26,7 +26,7 @@ RUN \
     apt-get update && \
     apt-get upgrade -yqq && \
     apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
-    apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev && \
+    apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev libmagickwand-dev && \
     apt-get install -y --only-upgrade apache2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -67,6 +67,8 @@ RUN apt-get -y install build-essential cmake git libkrb5-dev libtool libssl-dev 
 RUN apt-get -y install gcc make autoconf libc-dev pkg-config
 RUN apt-get -y install libmcrypt-dev
 RUN pecl install --nodeps mcrypt-snapshot
+RUN pecl install --nodeps imagick
+RUN docker-php-ext-enable imagick
 
 RUN ( cd /tmp && \
       curl https://dist.libuv.org/dist/v1.35.0/libuv-v1.35.0.tar.gz -o libuv.tgz  && tar xzf libuv.tgz && \
@@ -102,7 +104,7 @@ RUN ( cd /tmp && \
 RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev linux-libc-dev
 RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
 RUN apt-get -y remove libmcrypt-dev
-RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev
+RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev libmagickwand-dev
 RUN apt autoremove -yq && apt autoclean -qy
 RUN apt-get install --no-install-recommends -yq libzip4 libgd-tools
 
