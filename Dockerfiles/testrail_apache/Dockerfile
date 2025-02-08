@@ -104,9 +104,10 @@ RUN ( cd /tmp && \
 RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev linux-libc-dev
 RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
 RUN apt-get -y remove libmcrypt-dev
-RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev libmagickwand-dev
-RUN apt autoremove -yq && apt autoclean -qy
+RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev
 RUN apt-get install --no-install-recommends -yq libzip4 libgd-tools
+RUN apt-mark manual libmagickcore-6-arch-config libmagickcore-6-headers libmagickcore-6.q16-6-extra libmagickwand-6-headers imagemagick-6-common libmagickwand-6.q16-6
+RUN apt autoremove -yq && apt autoclean -qy
 
 
 RUN rm -rf /tmp/php-driver
