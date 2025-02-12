@@ -1,5 +1,5 @@
 ARG ARG_PHP_VERSION=8.1
-FROM php:${ARG_PHP_VERSION}-apache-bullseye
+FROM php:${ARG_PHP_VERSION}-apache-bookworm
 
 ARG ARG_PHP_VERSION=8.1
 ARG ARG_IONCUBE_VERSION=12.0.5
@@ -26,7 +26,7 @@ RUN \
     apt-get update && \
     apt-get upgrade -yqq && \
     apt-get install -y --no-install-recommends curl zip unzip wget iputils-ping mariadb-client openssl && \
-    apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev && \
+    apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev libmagickwand-dev && \
     apt-get install -y --only-upgrade apache2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -67,6 +67,8 @@ RUN apt-get -y install build-essential cmake git libkrb5-dev libtool libssl-dev 
 RUN apt-get -y install gcc make autoconf libc-dev pkg-config
 RUN apt-get -y install libmcrypt-dev
 RUN pecl install --nodeps mcrypt-snapshot
+RUN pecl install --nodeps imagick
+RUN docker-php-ext-enable imagick
 
 RUN ( cd /tmp && \
       curl https://dist.libuv.org/dist/v1.35.0/libuv-v1.35.0.tar.gz -o libuv.tgz  && tar xzf libuv.tgz && \
@@ -98,6 +100,16 @@ RUN ( cd /tmp && \
       ./configure && \
       make install \
     )
+
+RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev linux-libc-dev
+RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
+RUN apt-get -y remove libmcrypt-dev
+RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev
+RUN apt-get install --no-install-recommends -yq libzip4 libgd-tools
+RUN apt-mark manual libmagickcore-6-arch-config libmagickcore-6-headers libmagickcore-6.q16-6-extra libmagickwand-6-headers imagemagick-6-common libmagickwand-6.q16-6
+RUN apt autoremove -yq && apt autoclean -qy
+
+
 RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf
 VOLUME /apache-conf
