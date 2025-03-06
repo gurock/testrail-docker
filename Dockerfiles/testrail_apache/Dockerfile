@@ -139,6 +139,9 @@ COPY apache_testrail.conf /apache-conf/000-default.conf
 COPY ssl_apache_testrail.conf /apache-conf/ssl_apache_testrail.conf
 COPY .htaccess /apache-conf/.htaccess
 
+RUN echo '<FilesMatch "\.(sql|ini)$">\n    Require all denied\n</FilesMatch>' > /var/www/testrail/.htaccess
+RUN chmod 644 /var/www/testrail/.htaccess
+
 COPY custom-entrypoint.sh /custom-entrypoint.sh
 ENTRYPOINT ["/custom-entrypoint.sh"]
 CMD ["apache2-foreground"]
