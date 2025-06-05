@@ -3,7 +3,7 @@ FROM php:${ARG_PHP_VERSION}-apache-bookworm
 
 ARG ARG_PHP_VERSION=8.1
 ARG ARG_IONCUBE_VERSION=12.0.5
-ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.1.1.1027-ion81.zip
+ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.2.1.1007-ion81.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
