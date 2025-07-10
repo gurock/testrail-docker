@@ -3,7 +3,7 @@ FROM php:${ARG_PHP_VERSION}-apache-bookworm
 
 ARG ARG_PHP_VERSION=8.1
 ARG ARG_IONCUBE_VERSION=12.0.5
-ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.2.1.1010-ion81.zip
+ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.3.1.1020-ion81.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
@@ -14,6 +14,7 @@ ENV TR_DEFAULT_ATTACHMENT_DIR="/opt/testrail/attachments/"
 ENV OPENSSL_CONF="/etc/ssl/"
 ENV LDAP_CONF_DIR="/etc/ldap/"
 ENV LDAP_CONF_FILE="$LDAP_CONF_DIR/ldap.conf"
+ENV TR_CHROME_PATH="/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell"
 
 LABEL vendor="TestRail" \
       maintainer="Christian Breitwieser" \
@@ -101,6 +102,19 @@ RUN ( cd /tmp && \
       make install \
     )
 
+RUN ( cd /tmp && \
+      apt-get update && \
+      apt install -y libnss3 libatk1.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libasound2 libatk-bridge2.0-0 libxfixes3 && \
+      LATEST_VERSION=$(wget -qO- https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE) && \
+      wget https://storage.googleapis.com/chrome-for-testing-public/${LATEST_VERSION}/linux64/chrome-headless-shell-linux64.zip && \
+      unzip "chrome-headless-shell-linux64.zip" && \
+      mv chrome-headless-shell-linux64 /usr/bin && \
+      chown www-data:www-data /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chown www-data:www-data /usr/bin/chrome-headless-shell-linux64 && \
+      chmod 775 /usr/bin/chrome-headless-shell-linux64/* -R && \
+      chmod 775 /usr/bin/chrome-headless-shell-linux64 \
+    )
+
 RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev linux-libc-dev
 RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
 RUN apt-get -y remove libmcrypt-dev
@@ -108,7 +122,6 @@ RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zli
 RUN apt-get install --no-install-recommends -yq libzip4 libgd-tools
 RUN apt-mark manual libmagickcore-6-arch-config libmagickcore-6-headers libmagickcore-6.q16-6-extra libmagickwand-6-headers imagemagick-6-common libmagickwand-6.q16-6
 RUN apt autoremove -yq && apt autoclean -qy
-
 
 RUN rm -rf /tmp/php-driver
 RUN mkdir -p /apache-conf

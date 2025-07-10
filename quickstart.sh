@@ -223,6 +223,10 @@ echo "    User:       'cassandra'"
 echo "    Password:   'cassandra'"
 
 echo
+echo " CHROME PATH (For TestRail versions that supports Chrome-based PDF Generation)"
+echo "    Chrome Headless Shell Path:     '/usr/bin/chrome-headless-shell-linux64/chrome-headless-shell'"
+
+echo
 echo "  Application Settings"
 echo "    - Simply leave the default values for the folders 'logs, reports, attachments and audit'."
 echo
