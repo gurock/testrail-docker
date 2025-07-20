@@ -161,3 +161,5 @@ CMD ["apache2-foreground"]
 
 WORKDIR /var/www/testrail
 EXPOSE 80
+
+RUN sed -i "s/'CASSANDRA_PORT',/\/\/'CASSANDRA_PORT',/g" task.php
