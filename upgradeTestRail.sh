@@ -4,6 +4,9 @@ timeStamp=$(date "+%Y.%m.%d-%H.%M.%S")
 dbFolder=_mysql
 optFolder=_opt
 confFolder=_config
+# value for the variable cassandraDeprecationVersion will need to be updated with actual deprecation version.
+cassandraDeprecationVersion="9.4.0"
+cassandraIsDeprecated="true"
 
 backupDir=backup
 mkdir -p  $backupDir
@@ -44,13 +47,29 @@ else
     fi
 fi
 
+# Normalize versions to 3-part format (e.g., 9 -> 9.0.0, 9.0 -> 9.0.0)
+normalize_version() {
+    echo "$1" | awk -F. '{ printf("%d.%d.%d\n", $1, $2?$2:0, $3?$3:0) }'
+}
+
+version=$(normalize_version "$version")
+cassandraDeprecationVersion=$(normalize_version "$cassandraDeprecationVersion")
+
+if [ "$(printf '%s\n' "$version" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$version" ] && [ "$version" != "$cassandraDeprecationVersion" ]; then
+    cassandraIsDeprecated="false"
+else
+    echo "Cassandra Deprecation Applied for Provided Testrail Version '${version}'"
+fi
+
 echo
 echo "###########################################################################################"
 echo " If you're upgrading from a docker applicance, simply continue. Otherwise, do these steps:"
 echo "   * Ensure that the 'config.php' file is in the '_config folder'."
 echo "   * Copy the content of /var/lib/mysql to '_mysql'"
 echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
-echo "   * Copy the content of /var/lib/cassandra to '_cassandra'"
+if [ "$cassandraIsDeprecated" == "false" ]; then
+    echo "   * Copy the content of /var/lib/cassandra to '_cassandra'"
+fi
 echo "     (if you're using a dedicated mysql server for TestRail -- otherwise do a manual upgrade)"
 echo "   * Copy/Move your attachment, reports, logs, and audit folders into '_opt'."
 echo
@@ -71,7 +90,11 @@ echo "Getting new TestRail version and then restarting TestRail"
 
 docker-compose pull
 docker-compose down -v
-docker-compose up -d
+if [ "$cassandraIsDeprecated" == "true" ]; then
+    docker-compose -f docker-compose.yml up -d
+else
+    docker-compose -f docker-compose.yml -f docker-compose-override-cassandra.yml up -d
+fi
 
 echo
 echo "We're done :-)"
