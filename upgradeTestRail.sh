@@ -5,7 +5,7 @@ dbFolder=_mysql
 optFolder=_opt
 confFolder=_config
 # value for the variable cassandraDeprecationVersion will need to be updated with actual deprecation version.
-cassandraDeprecationVersion="9.0.0"
+cassandraDeprecationVersion="9.4.0"
 cassandraIsDeprecated="true"
 
 backupDir=backup
