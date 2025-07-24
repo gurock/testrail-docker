@@ -28,7 +28,7 @@ envFile=.env
 configFile=_config/config.php
 httpPort=8000
 # value for the variable cassandraDeprecationVersion will need to be updated with actual deprecation version.
-cassandraDeprecationVersion="9.0.0"
+cassandraDeprecationVersion="9.4.0"
 cassandraIsDeprecated="true"
 
 #####################################
