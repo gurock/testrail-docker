@@ -27,9 +27,13 @@ services:
       - testrail
     ports:
       - "${HTTP_PORT:-8000}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      SSL: "{SSL:true}"
     volumes:
       - 'testrail_root:/var/www/testrail'
       - 'testrail_opt:/opt/testrail'
+      - 'testrail_ssl:/opt/nginx/ssl'
 
 
   db:
@@ -68,6 +72,13 @@ volumes:
     driver_opts:
       type: none
       device: "$PWD/${OPT_PATH:-_opt}"
+      o: bind
+      
+   testrail_ssl:
+    driver: local
+    driver_opts:
+      type: none
+      device: "$PWD/${OPT_PATH:-_ssl}"
       o: bind
 
   testrail_mysql:
