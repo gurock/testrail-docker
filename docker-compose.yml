@@ -35,13 +35,6 @@ services:
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"
       MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
 
-  cassandra:
-    image: testrail/cassandra:latest
-    networks:
-      - testrail
-    volumes:
-      - 'testrail_cassandra:/var/lib/cassandra'
-
 networks:
   testrail:
     driver: bridge
@@ -59,13 +52,6 @@ volumes:
     driver_opts:
       type: none
       device: "$PWD/${MYSQL_PATH:-_mysql}"
-      o: bind
-
-  testrail_cassandra:
-    driver: local
-    driver_opts:
-      type: none
-      device: "$PWD/${CASSANDRA_PATH:-_cassandra}"
       o: bind
 
   testrail_config:
