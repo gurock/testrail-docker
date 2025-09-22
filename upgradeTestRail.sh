@@ -89,7 +89,7 @@ sudo tar czf "${backupDir}/testrail-backup-${timeStamp}".tar.gz $optFolder $dbFo
 echo "Getting new TestRail version and then restarting TestRail"
 
 docker-compose pull
-docker-compose down -v
+docker-compose down -v --remove-orphans
 if [ "$cassandraIsDeprecated" == "true" ]; then
     docker-compose -f docker-compose.yml up -d
 else
