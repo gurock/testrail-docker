@@ -27,6 +27,9 @@ cassandraFolder=_cassandra
 envFile=.env
 configFile=_config/config.php
 httpPort=8000
+# value for the variable cassandraDeprecationVersion will need to be updated with actual deprecation version.
+cassandraDeprecationVersion="9.5.1"
+cassandraIsDeprecated="true"
 
 #####################################
 # check if TestRail is already running
@@ -123,15 +126,28 @@ fi
 #####################################
 # Cassandra
 
-echo
-echo
-echo "The Cassandra database will be stored in the local '_cassandra' folder"
+# Normalize versions to 3-part format (e.g., 9 -> 9.0.0, 9.0 -> 9.0.0)
+normalize_version() {
+    echo "$1" | awk -F. '{ printf("%d.%d.%d\n", $1, $2?$2:0, $3?$3:0) }'
+}
 
-if [ "$(ls -A $cassandraFolder)" ]; then
-    echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
+testrailVersion=$(normalize_version "$testrailVersion")
+cassandraDeprecationVersion=$(normalize_version "$cassandraDeprecationVersion")
 
-    sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
-    mkdir -p $cassandraFolder
+# Compare versions
+if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$testrailVersion" ] && [ "$testrailVersion" != "$cassandraDeprecationVersion" ]; then
+    echo
+    echo
+    echo "The Cassandra database will be stored in the local '_cassandra' folder"
+    cassandraIsDeprecated="false"
+    if [ "$(ls -A $cassandraFolder)" ]; then
+        echo "  ... The Cassandra folder already contains files  -- moving it to '${backupDir}'"
+
+        sudo mv $cassandraFolder $backupDir/"${cassandraFolder}_${timeStamp}"
+        mkdir -p $cassandraFolder
+    fi
+else
+    echo "Cassandra Deprecation Applied for Provided Testrail Version '${testrailVersion}'"
 fi
 
 #####################################
@@ -176,8 +192,11 @@ fi
 echo
 echo "TestRail will be started now with HTTP and will listen on port ${httpPort}."
 
-
-docker-compose -f "${dockerComposeFile}" up -d
+if [ "$cassandraIsDeprecated" == "true" ]; then
+    docker-compose -f "${dockerComposeFile}" up -d
+else
+    docker-compose -f "${dockerComposeFile}" -f docker-compose-override-cassandra.yml up -d
+fi
 sleep 5
 
 echo
@@ -214,13 +233,15 @@ echo "    Database:   'testrail'"
 echo "    User:       'testrail'"
 echo "    Password:    <The user password you've entered for the db-user>"
 
-echo
-echo " CASSANDRA SETTINGS"
-echo "    Server:     'cassandra'"
-echo "    Port:       9042"
-echo "    Keyspace:   'tr_keyspace'"
-echo "    User:       'cassandra'"
-echo "    Password:   'cassandra'"
+if [ "$(printf '%s\n' "$testrailVersion" "$cassandraDeprecationVersion" | sort -V | head -n1)" == "$testrailVersion" ] && [ "$testrailVersion" != "$cassandraDeprecationVersion" ]; then
+    echo
+    echo " CASSANDRA SETTINGS"
+    echo "    Server:     'cassandra'"
+    echo "    Port:       9042"
+    echo "    Keyspace:   'tr_keyspace'"
+    echo "    User:       'cassandra'"
+    echo "    Password:   'cassandra'"
+fi
 
 echo
 echo " CHROME PATH (For TestRail versions that supports Chrome-based PDF Generation)"
