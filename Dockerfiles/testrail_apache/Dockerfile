@@ -80,28 +80,6 @@ RUN ( cd /tmp && \
     )
 RUN rm -rf /tmp/libuv-v1.35.0 /tmp/libuv.tgz
 
-RUN ( cd /tmp &&  \
-      git clone https://github.com/datastax/cpp-driver && \
-      cd cpp-driver && \
-      git checkout tags/2.16.2 && \
-      mkdir build &&  \
-      cd build && \
-      cmake -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
-      make -j4 && \
-      make install \
-      )
-RUN rm -rf /tmp/cpp-driver
-
-RUN ( cd /tmp && \
-      git clone https://github.com/qkdreyer/cassandra-php-driver.git && \
-      cd cassandra-php-driver && \
-      git submodule update --init && \
-      cd ext && \
-      phpize && \
-      ./configure && \
-      make install \
-    )
-
 RUN ( cd /tmp && \
       apt-get update && \
       apt install -y libnss3 libatk1.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libasound2 libatk-bridge2.0-0 libxfixes3 && \
