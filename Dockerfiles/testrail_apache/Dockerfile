@@ -2,7 +2,7 @@ ARG ARG_PHP_VERSION=8.3
 FROM php:${ARG_PHP_VERSION}-apache-bookworm
 
 ARG ARG_PHP_VERSION=8.3
-ARG ARG_IONCUBE_VERSION=12.0.5
+ARG ARG_IONCUBE_VERSION=15.0.0
 ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.6.1.1033-ion81.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
