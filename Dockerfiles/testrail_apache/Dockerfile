@@ -3,7 +3,7 @@ FROM php:${ARG_PHP_VERSION}-apache-bookworm
 
 ARG ARG_PHP_VERSION=8.1
 ARG ARG_IONCUBE_VERSION=12.0.5
-ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.6.1.1033-ion81.zip
+ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.8.1.1506-ion81.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
@@ -79,28 +79,6 @@ RUN ( cd /tmp && \
       make install \
     )
 RUN rm -rf /tmp/libuv-v1.35.0 /tmp/libuv.tgz
-
-RUN ( cd /tmp &&  \
-      git clone https://github.com/datastax/cpp-driver && \
-      cd cpp-driver && \
-      git checkout tags/2.16.2 && \
-      mkdir build &&  \
-      cd build && \
-      cmake -DCASS_BUILD_STATIC=ON -DCASS_BUILD_SHARED=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
-      make -j4 && \
-      make install \
-      )
-RUN rm -rf /tmp/cpp-driver
-
-RUN ( cd /tmp && \
-      git clone https://github.com/qkdreyer/cassandra-php-driver.git && \
-      cd cassandra-php-driver && \
-      git submodule update --init && \
-      cd ext && \
-      phpize && \
-      ./configure && \
-      make install \
-    )
 
 RUN ( cd /tmp && \
       apt-get update && \
