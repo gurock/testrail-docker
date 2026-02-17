@@ -1,19 +1,19 @@
 #!/bin/bash
 set -e
 
-if [ ! -z "$DB_URL" ] && [ "${#DB_URL}" != 0 ]
-then
+if [ -n "$DB_URL" ]; then
     echo
     echo "####################################################"
-    echo "  Downloading existing TestRail DB dump from URL: " $DB_URL
+    echo "  Downloading existing TestRail DB dump from URL:"
+    echo "  $DB_URL"
     echo "####################################################"
     echo
 
-    wget --no-check-certificate -O /docker-entrypoint-initdb.d/db.sql $DB_URL
+    curl -L --insecure "$DB_URL" \
+        -o /docker-entrypoint-initdb.d/db.sql
 
     echo "DB downloaded"
     echo "####################################################"
 fi
 
-exec docker-entrypoint.sh mysqld"$@"
-
+exec docker-entrypoint.sh mysqld "$@"
