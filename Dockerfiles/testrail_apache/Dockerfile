@@ -55,6 +55,7 @@ RUN \
   chown -R www-data:www-data /opt/testrail
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
+RUN echo "memory_limit=4096M" > /usr/local/etc/php/conf.d/memory-limit.ini
 
 RUN \
   wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
