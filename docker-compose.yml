@@ -5,7 +5,6 @@
 
 # Instructions for necessary settings during setup when using docker-compose deployment can be found here:
 # TBD
-
 version: '3'
 services:
   srv:
@@ -18,14 +17,24 @@ services:
     volumes:
       - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_opt:/opt/testrail'
+    environment:
+      ADV_REPORTING_URL: "http://localhost:${REPORTS_HTTP_PORT:-9000}"
+      ADV_REPORTING_USERNAME: "administrator"
+      ADV_REPORTING_PASSWORD: "test"
 
   db:
     image: testrail/mysql:latest
+    ulimits:
+      nofile: # Fix memory leak issue on some systems when LimitCORE=infinity (containerd)
+        soft: 18576
+        hard: 18576
     restart: unless-stopped
     depends_on:
       - srv
     networks:
       - testrail
+    ports:
+      - "3307:3306"
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
     environment:
@@ -34,10 +43,51 @@ services:
       MYSQL_DATABASE: "${DB_NAME:-testrail}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PWD:-my-secret-password}"
       MYSQL_ALLOW_EMPTY_PASSWORD: 'false'
+    # Health Check allows reporting to wait until mysql is available and listening
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "--password=${DB_ROOT_PWD:-my-secret-password}"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 20s      
+
+  # TestRail Reporting image. Based on the Yellowfin App-Only image.
+  reporting:
+    image: testrailreporting-apponly
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - testrail
+    ports:
+      - "${REPORTS_HTTP_PORT:-9000}:8080"
+    environment:
+      JDBC_CLASS_NAME: "com.mysql.cj.jdbc.Driver"
+      JDBC_CONN_URL:   "jdbc:mysql://db/reporting"
+      # Currently using root. This can be replaced with the TestRail user when the reporting database is created 
+      # alongside the test rail database. Root is currently the only database user that can create a new database
+      # as part of the installer. 
+      JDBC_CONN_USER:  "root"
+      JDBC_CONN_PASS:  "${DB_ROOT_PWD:-my-secret-password}"
+      # These settings are required if the database passed does not exist. 
+      # (JDBC_CONN_UIRL should be all that is required if the reporting database already exists)
+      DATABASE_HOST:   "db"
+      DATABASE_PORT:   "3306"
+      DATABASE_NAME:   "reporting"
+      CREATE_DATABASE_ON_INSTALL: true
+      # Import options allow GenericJDBC sources to be injected with local database credentials
+      # (This feature is not currently present in a released version of Yellowfin)
+      IMPORT_DATASOURCE_URL:  "jdbc:mysql://db/${DB_NAME:-testrail}"
+      IMPORT_DATASOURCE_USER: "${DB_USER:-testrail}"
+      IMPORT_DATASOURCE_PASS: "${DB_PWD:-testrail}"
 
 networks:
   testrail:
     driver: bridge
+    driver_opts: 
+     com.docker.network.driver.mtu: "1500"
+
 
 volumes:
   testrail_opt:
