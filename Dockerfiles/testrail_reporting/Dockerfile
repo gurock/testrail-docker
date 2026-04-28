@@ -119,10 +119,6 @@ ENV DATABASE_NAME=reporting
 # The installer can be downloaded during provisioning, or by providing the JAR file as part of image
 #######################################################################################################
 
-# Download TestRail Reporting installer JAR
-# (This may slow down image creation time)
-#RUN curl -qL https://files.yellowfin.bi/downloads/9.3/yellowfin-9.3.0-20201008-full.jar -o /tmp/testrail-reporting-installer.jar
-
 # Alternatively copy in an installer that has been included image
 # (This will remove the wait time for downloading the installer during image creation)
 # Example syntax for copying in an embedded installer:
@@ -134,7 +130,7 @@ COPY TestRailReportingInstallerServer.jar /tmp/testrail-reporting-installer.jar
 # Extract assets directly from TestRail Reporting installer JAR onto filesystem.
 #######################################################################################################
 RUN <<EOT
- #Extract Yellowfin
+ #Extract TestRail Reporting
  mkdir -p /opt/testrailreporting /tmp/trr_temp /tmp/trr_temp2/appserver/webapps/ROOT /opt/testrailreporting/appserver/logs
  #Perform application extraction
  unzip /tmp/testrail-reporting-installer.jar -d /tmp/trr_temp  
@@ -232,7 +228,7 @@ sed -i 's|JdbcDriverFiles={JDBC_DRIVER_FILES}|#JdbcDriverFiles={JDBC_DRIVER_FILE
 fi
 echo ==== Silent Installer Properties 
 cat /opt/testrailreporting/tools/silent-install.properties
-echo ==== Installing Yellowfin 
+echo ==== Installing TestRail Reporting 
 java -jar /tmp/testrail-reporting-installer.jar -silent /opt/testrailreporting/tools/silent-install.properties option.skipDataSourceValidation=true option.importDatasourceUsername=\"\$IMPORT_DATASOURCE_USER\" option.importDatasourcePassword=\"\$IMPORT_DATASOURCE_PASS\" option.importDatasourceUrl=\"\$IMPORT_DATASOURCE_URL\"
 echo ==== Copying Log 
 cp /tmp/installation/TestRail*ReportingInstallLog* /tmp

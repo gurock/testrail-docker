@@ -10,8 +10,8 @@ This Docker implementation is based on the [Yellowfin Application Only image](ht
 ## Deployment Instructions
 
 1. **Prepare the installer**:
-   Run [`TestRailReporting-Installer-Generator`](../TestRailReporting-Installer-Generator/generateBrandedInstaller.sh) to generate a TestRail Reporting branded installer.
-   Place the installer JAR file as `TestRailReportingInstaller.jar` in this directory.
+   Download the latest TestRail Reporting Installer JAR file.
+   Place the installer JAR file as `TestRailReportingInstallerServer.jar` in this directory.
 
 2. **Build the Docker image**:
    ```bash

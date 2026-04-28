@@ -5,7 +5,6 @@
 
 # Instructions for necessary settings during setup when using docker-compose deployment can be found here:
 # TBD
-version: '3'
 services:
   srv:
     image: "testrail/apache:${TESTRAIL_VERSION:-default}"
@@ -33,8 +32,6 @@ services:
       - srv
     networks:
       - testrail
-    ports:
-      - "3307:3306"
     volumes:
       - 'testrail_mysql:/var/lib/mysql'
     environment:
@@ -51,7 +48,7 @@ services:
       retries: 5
       start_period: 20s      
 
-  # TestRail Reporting image. Based on the Yellowfin App-Only image.
+  # TestRail Reporting AppOnly image
   reporting:
     image: testrailreporting-apponly
     restart: unless-stopped
@@ -71,13 +68,12 @@ services:
       JDBC_CONN_USER:  "root"
       JDBC_CONN_PASS:  "${DB_ROOT_PWD:-my-secret-password}"
       # These settings are required if the database passed does not exist. 
-      # (JDBC_CONN_UIRL should be all that is required if the reporting database already exists)
+      # (JDBC_CONN_URL should be all that is required if the reporting database already exists)
       DATABASE_HOST:   "db"
       DATABASE_PORT:   "3306"
       DATABASE_NAME:   "reporting"
       CREATE_DATABASE_ON_INSTALL: true
       # Import options allow GenericJDBC sources to be injected with local database credentials
-      # (This feature is not currently present in a released version of Yellowfin)
       IMPORT_DATASOURCE_URL:  "jdbc:mysql://db/${DB_NAME:-testrail}"
       IMPORT_DATASOURCE_USER: "${DB_USER:-testrail}"
       IMPORT_DATASOURCE_PASS: "${DB_PWD:-testrail}"
@@ -86,7 +82,7 @@ networks:
   testrail:
     driver: bridge
     driver_opts: 
-     com.docker.network.driver.mtu: "1500"
+      com.docker.network.driver.mtu: "1500"
 
 
 volumes:
