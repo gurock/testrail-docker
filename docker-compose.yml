@@ -18,6 +18,7 @@ services:
     volumes:
       - 'testrail_config:/var/www/testrail/config/'
       - 'testrail_opt:/opt/testrail'
+      - './zzz-memory-limit.ini:/usr/local/etc/php/conf.d/zzz-memory-limit.ini'
 
   db:
     image: testrail/mysql:latest
