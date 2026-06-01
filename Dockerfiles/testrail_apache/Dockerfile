@@ -41,8 +41,6 @@ RUN \
     docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu && \
     docker-php-ext-install ldap && \
     docker-php-ext-install pdo && \
-    docker-php-ext-configure gd --enable-gd --with-jpeg && \
-    docker-php-ext-install -j$(nproc) gd && \
     docker-php-ext-install pdo_mysql
 
 RUN \
@@ -97,7 +95,7 @@ RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev l
 RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
 RUN apt-get -y remove libmcrypt-dev
 RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev
-RUN apt-get install --no-install-recommends -yq libzip4 libgd-tools
+RUN apt-get install --no-install-recommends -yq libzip4
 RUN apt-mark manual libmagickcore-6-arch-config libmagickcore-6-headers libmagickcore-6.q16-6-extra libmagickwand-6-headers imagemagick-6-common libmagickwand-6.q16-6
 RUN apt autoremove -yq && apt autoclean -qy
 
