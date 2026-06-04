@@ -71,6 +71,16 @@ RUN pecl install --nodeps mcrypt-snapshot
 RUN pecl install --nodeps imagick
 RUN docker-php-ext-enable imagick
 
+RUN cd /tmp \
+    && curl -L https://github.com/phpredis/phpredis/archive/refs/tags/6.0.2.tar.gz | tar xz \
+    && cd phpredis-6.0.2 \
+    && phpize \
+    && ./configure \
+    && make -j$(nproc) \
+    && make install \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/phpredis-6.0.2
+
 RUN ( cd /tmp && \
       curl https://dist.libuv.org/dist/v1.35.0/libuv-v1.35.0.tar.gz -o libuv.tgz  && tar xzf libuv.tgz && \
       cd libuv-v1.35.0 && \

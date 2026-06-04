@@ -48,6 +48,20 @@ RUN \
 
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
+RUN apt-get install -y --no-install-recommends autoconf gcc make \
+    && cd /tmp \
+    && curl -L https://github.com/phpredis/phpredis/archive/refs/tags/6.0.2.tar.gz | tar xz \
+    && cd phpredis-6.0.2 \
+    && phpize \
+    && ./configure \
+    && make -j$(nproc) \
+    && make install \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/phpredis-6.0.2 \
+    && apt-get remove -y autoconf gcc make \
+    && apt-get autoremove -y \
+    && apt-get clean
+
 RUN \
   wget  -O /tmp/ioncube.tar.gz http://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64_${ARG_IONCUBE_VERSION}.tar.gz && \
   tar -xzf /tmp/ioncube.tar.gz -C /tmp && \

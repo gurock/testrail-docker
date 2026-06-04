@@ -20,6 +20,12 @@ services:
       - 'testrail_opt:/opt/testrail'
       - './zzz-memory-limit.ini:/usr/local/etc/php/conf.d/zzz-memory-limit.ini'
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - testrail
+
   db:
     image: testrail/mysql:latest
     restart: unless-stopped

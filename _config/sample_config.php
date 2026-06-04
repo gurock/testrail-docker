@@ -33,6 +33,24 @@ define('CASSANDRA_SCHEMA_VERSION', 2);
 
 /*
 |--------------------------------------------------------------------
+| CACHE CONFIGURATION
+|--------------------------------------------------------------------
+|
+| TestRail supports a pluggable persistent cache for reference data
+| (statuses, templates, priorities, users, etc.) to reduce database
+| load across requests.
+|
+*/
+
+define('CACHE_DRIVER', 'redis');
+define('CACHE_REDIS_HOST', 'redis');     // service name in docker-compose
+define('CACHE_REDIS_PORT', 6379);        // optional, default: 6379
+define('CACHE_REDIS_PASSWORD', null);    // optional, default: none
+define('CACHE_REDIS_DATABASE', 0);       // optional, default: 0
+
+
+/*
+|--------------------------------------------------------------------
 | DIAGNOSTICS
 |--------------------------------------------------------------------
 |
