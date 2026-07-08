@@ -3,7 +3,7 @@ FROM php:${ARG_PHP_VERSION}-apache-trixie
 
 ARG ARG_PHP_VERSION=8.3
 ARG ARG_IONCUBE_VERSION=15.0.0
-ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-10.4.1.1004-ion81.zip
+ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-10.5.1.1001-ion81.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
