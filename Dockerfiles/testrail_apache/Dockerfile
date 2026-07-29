@@ -1,9 +1,9 @@
 ARG ARG_PHP_VERSION=8.3
-FROM php:${ARG_PHP_VERSION}-apache-bookworm
+FROM php:${ARG_PHP_VERSION}-apache-trixie
 
 ARG ARG_PHP_VERSION=8.3
 ARG ARG_IONCUBE_VERSION=15.0.0
-ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-10.5.1.1001-ion81.zip
+ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-10.6.1.1001-ion81.zip
 
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
@@ -64,7 +64,7 @@ RUN \
   rm -f /tmp/ioncube.tar.gz
 
 RUN apt-get update
-RUN apt-get -y install build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev
+RUN apt-get -y install build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre2-dev
 RUN apt-get -y install gcc make autoconf libc-dev pkg-config
 RUN apt-get -y install libmcrypt-dev
 RUN pecl install --nodeps mcrypt-snapshot
@@ -93,12 +93,12 @@ RUN ( cd /tmp && \
       chmod 775 /usr/bin/chrome-headless-shell-linux64 \
     )
 
-RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre3-dev linux-libc-dev
+RUN apt-get -y remove build-essential cmake git libkrb5-dev libtool libssl-dev libgmp-dev libpcre2-dev linux-libc-dev
 RUN apt-get -y remove gcc make autoconf libc-dev pkg-config
 RUN apt-get -y remove libmcrypt-dev
 RUN apt-get -y remove libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libpng-dev libjpeg-dev
-RUN apt-get install --no-install-recommends -yq libzip4 libgd-tools
-RUN apt-mark manual libmagickcore-6-arch-config libmagickcore-6-headers libmagickcore-6.q16-6-extra libmagickwand-6-headers imagemagick-6-common libmagickwand-6.q16-6
+RUN apt-get install --no-install-recommends -yq libzip5 libgd-tools
+RUN dpkg -l 'libmagick*' 'imagemagick*' 2>/dev/null | awk '/^ii/{print $2}' | xargs -r apt-mark manual
 RUN apt autoremove -yq && apt autoclean -qy
 
 RUN rm -rf /tmp/php-driver
