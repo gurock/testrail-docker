@@ -5,6 +5,12 @@ ARG ARG_PHP_VERSION=8.1
 ARG ARG_IONCUBE_VERSION=12.0.5
 ARG ARG_URL=https://secure.testrail.com/downloads/testrail/testrail-9.8.1.1506-ion81.zip
 
+# Custom patched PHP source (CVE-2026-109618 / CVE-2026-109619 backport on the
+# PHP-8.1 line). Pinned to a specific commit for reproducible builds. Still
+# version 8.1.34 on the 8.1 ABI, so the ionCube 8.1 loader stays compatible.
+ARG ARG_PHP_SRC_REPO=https://github.com/php/php-src.git
+ARG ARG_PHP_SRC_REF=1d7dec178a094e6e75b229ce22754045f8c6070a
+
 ENV TR_DEFAULT_TASK_EXECUTION=60
 ENV TR_CONFIGPATH="/var/www/testrail/config/"
 ENV TR_DEFAULT_LOG_DIR="/opt/testrail/logs/"
@@ -30,6 +36,57 @@ RUN \
     apt-get install -y --no-install-recommends libzip-dev zlib1g-dev libcurl4-gnutls-dev libldap2-dev zlib1g-dev libxml2-dev libfontconfig1 libpng-dev libjpeg-dev libmagickwand-dev && \
     apt-get install -y --only-upgrade apache2 && \
     apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Rebuild the PHP binaries from the custom patched source, in place over the
+# official image, reusing its EXACT configure options (php-config
+# --configure-options) so that every docker-php-ext-* helper, the apache SAPI
+# and the ionCube loader below keep working unchanged.
+RUN set -eux; \
+    savedAptMark="$(apt-mark showmanual)"; \
+    DEBIAN_FRONTEND=noninteractive apt-get update; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates git autoconf gcc g++ make pkg-config bison re2c \
+        apache2-dev \
+        libxml2-dev libssl-dev libreadline-dev \
+        libsodium-dev libsqlite3-dev libonig-dev zlib1g-dev libargon2-dev; \
+    phpConfigureOpts="$(php-config --configure-options)"; \
+    mkdir -p /usr/src/php-custom; cd /usr/src/php-custom; \
+    git init -q; \
+    git remote add origin "$ARG_PHP_SRC_REPO"; \
+    git fetch -q --depth 1 origin "$ARG_PHP_SRC_REF"; \
+    git checkout -q FETCH_HEAD; \
+    ./buildconf --force; \
+    eval ./configure $phpConfigureOpts; \
+    make -j"$(nproc)"; \
+    make install; \
+    make clean; \
+    # Replace the image's bundled source tarball so later docker-php-ext-install
+    # steps compile bundled extensions from the patched source too.
+    rm -f /usr/src/php.tar.xz /usr/src/php.tar.xz.asc; \
+    tar -cJf /usr/src/php.tar.xz -C /usr/src --transform 's,^php-custom,php,' php-custom; \
+    cd /; rm -rf /usr/src/php-custom; \
+    php -v; \
+    apt-mark auto '.*' > /dev/null; \
+    apt-mark manual $savedAptMark > /dev/null; \
+    # Mark as manual every package providing a shared lib that the freshly
+    # compiled PHP binaries/extensions actually link, so the later cleanup
+    # steps don't autoremove runtime deps (e.g. libcurl-gnutls) out from
+    # under the self-built (dpkg-invisible) PHP binary.
+    find /usr/local -type f -executable -exec ldd '{}' ';' 2>/dev/null \
+        | awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) next; gsub("^/(usr/)?", "", so); printf "*/%s\n", so }' \
+        | sort -u \
+        | xargs -r dpkg-query --search 2>/dev/null \
+        | cut -d: -f1 \
+        | sort -u \
+        | xargs -r apt-mark manual > /dev/null; \
+    # The compiled PHP core links the gnutls flavour of libcurl (from the
+    # libcurl4-gnutls-dev installed earlier). A later build stage removes that
+    # -dev package, which would orphan the libcurl-gnutls runtime lib and break
+    # the PHP binary. Pin it manual so it survives every autoremove downstream.
+    apt-mark manual libcurl3-gnutls > /dev/null; \
+    apt-get autoremove -y; \
+    apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
 RUN \
