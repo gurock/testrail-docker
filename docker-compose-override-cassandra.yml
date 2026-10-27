@@ -1,6 +1,6 @@
 version: '3'
 services:
-   cassandra:
+  cassandra:
     image: testrail/cassandra:latest
     networks:
       - testrail
