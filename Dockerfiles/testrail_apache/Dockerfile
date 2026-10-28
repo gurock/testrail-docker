@@ -82,7 +82,9 @@ RUN rm -rf /tmp/libuv-v1.35.0 /tmp/libuv.tgz
 
 RUN ( cd /tmp && \
       apt-get update && \
-      apt install -y libnss3 libatk1.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libasound2 libatk-bridge2.0-0 libxfixes3 && \
+      apt install -y libnss3 libatk1.0-0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxkbcommon0 libasound2 libatk-bridge2.0-0 libxfixes3 \
+        fonts-noto-cjk fonts-noto-color-emoji fonts-noto-core fonts-noto-extra fonts-noto-unhinted && \
+      fc-cache -f && \
       LATEST_VERSION=$(wget -qO- https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE) && \
       wget https://storage.googleapis.com/chrome-for-testing-public/${LATEST_VERSION}/linux64/chrome-headless-shell-linux64.zip && \
       unzip "chrome-headless-shell-linux64.zip" && \
